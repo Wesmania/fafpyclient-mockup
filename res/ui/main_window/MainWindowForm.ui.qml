@@ -72,6 +72,13 @@ Item {
             }
         }
 
+        Button {
+            id: logoutButton
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            text: qsTr("Logout")
+        }
     }
 
     StackLayout {
@@ -80,12 +87,4 @@ Item {
         anchors.right: parent.right
         anchors.left: parent.left
     }
-
-
 }
-
-/*##^##
-Designer {
-    D{i:1;anchors_width:200}
-}
-##^##*/

@@ -12,7 +12,7 @@ if __name__ == "__main__":
     app = QGuiApplication(sys.argv)
 
     root_path = os.path.dirname(__file__)	# FIXME for pyinstaller and such
-    qml_file = os.path.join(root_path, "res/ui/main_window/MainWindow.qml")
+    qml_file = os.path.join(root_path, "res/ui/main_window/ToplevelWindow.qml")
     engine = QQmlApplicationEngine()
     engine.rootContext().setContextProperty("ROOT_PATH", root_path)
     engine.load(qml_file)
