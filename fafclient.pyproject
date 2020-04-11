@@ -1,0 +1,3 @@
+{
+    "files": ["client.ui","res/ui/main_window/MainWindowForm.ui.qml","res/ui/main_window/MainWindow.qml","fafclient.py","res/ui/main_window/MainTabButton.qml","res/ui/main_window/client.ui"]
+}
