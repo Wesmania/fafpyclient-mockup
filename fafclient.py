@@ -28,7 +28,7 @@ class LoginController(QObject):
     @Slot(str, str)
     def login(self, user, password):
         if user != "foo" or password != "bar":
-            print(f"Invalid credentials: {foo}, {bar}")
+            print(f"Invalid credentials: {user}, {password}")
         else:
             print("Logged in.")
             self.logged_in = True
