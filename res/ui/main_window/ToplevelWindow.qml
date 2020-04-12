@@ -14,6 +14,14 @@ ApplicationWindow {
     font.capitalization: Font.MixedCase
 
     ToplevelWindowForm {
+        id: mainWindowForm
         anchors.fill: parent
+        function setLoginPane(logged_in) {
+            currentIndex = logged_in ? 1 : 0
+        }
+    }
+
+    Component.onCompleted: {
+        loginController.loginSignal.connect(mainWindowForm.setLoginPane)
     }
 }

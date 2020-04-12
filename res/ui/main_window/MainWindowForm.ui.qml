@@ -8,7 +8,8 @@ Item {
     width: 1200
     height: 900
 
-    Pane {
+    property alias logoutButton: logoutButton
+    Item {
         id: menuBarPane
         height: 50
         anchors.right: parent.right
@@ -21,6 +22,7 @@ Item {
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             anchors.left: parent.left
+            anchors.margins: 6
             fillMode: Image.PreserveAspectFit
             MouseArea {
                 anchors.fill: parent
