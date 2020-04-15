@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.10.1, 2020-04-12T00:32:57. -->
+<!-- Written by QtCreator 4.10.1, 2020-04-15T21:52:09. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -100,11 +100,11 @@
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.1">
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Run /mnt/dane/gentoo-home/igor/Pobrane/faf/newclient/fafclient.py</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">fafclient</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./mnt/dane/gentoo-home/igor/Pobrane/faf/newclient/fafclient.py</value>
-    <value type="QString" key="PythonEditor.RunConfiguation.Interpreter">/mnt/dane/common-home/Pobrane/faf/pysideenv/bin/python</value>
-    <value type="QString" key="PythonEditor.RunConfiguation.Script">/mnt/dane/gentoo-home/igor/Pobrane/faf/newclient/fafclient.py</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Run /mnt/dane/gentoo-home/igor/Pobrane/faf/newclient/src/main.py</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">main</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./mnt/dane/gentoo-home/igor/Pobrane/faf/newclient/src/main.py</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Interpreter">/mnt/dane/gentoo-home/igor/Pobrane/faf/pysideenv/bin/python</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Script">/mnt/dane/gentoo-home/igor/Pobrane/faf/newclient/src/main.py</value>
     <value type="QString" key="RunConfiguration.Arguments"></value>
     <value type="uint" key="RunConfiguration.QmlDebugServerPort">3768</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>

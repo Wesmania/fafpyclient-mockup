@@ -16,12 +16,17 @@ ApplicationWindow {
     ToplevelWindowForm {
         id: mainWindowForm
         anchors.fill: parent
-        function setLoginPane(logged_in) {
-            currentIndex = logged_in ? 1 : 0
+        function showLoginPane() {
+            currentIndex = 0
+        }
+
+        function hideLoginPane() {
+            currentIndex = 1
         }
     }
 
     Component.onCompleted: {
-        loginController.loginSignal.connect(mainWindowForm.setLoginPane)
+        loginController.logged_in.connect(mainWindowForm.hideLoginPane)
+        loginController.logged_out.connect(mainWindowForm.showLoginPane)
     }
 }

@@ -1,3 +1,3 @@
 {
-    "files": ["res/ui/main_window/MainWindow.qml","fafclient.py","res/ui/login/LoginWindow.qml","res/ui/main_window/MainWindowForm.ui.qml","res/ui/main_window/MainTabButton.qml","res/ui/main_window/client.ui","res/ui/login/LoginWindowForm.ui.qml","client.ui","res/ui/main_window/ToplevelWindow.qml","res/ui/main_window/ToplevelWindowForm.ui.qml"]
+    "files": ["res/ui/main_window/ToplevelWindow.qml","client.ui","src/lobbyserver/login.py","res/ui/main_window/MainTabButton.qml","res/ui/main_window/ToplevelWindowForm.ui.qml","res/ui/main_window/MainWindow.qml","res/ui/main_window/MainWindowForm.ui.qml","src/main.py","res/ui/main_window/client.ui","res/ui/login/LoginWindow.qml","src/lobbyserver/protocol.py","res/ui/login/LoginWindowForm.ui.qml","src/lobbyserver/server.py","src/lobbyserver/connection.py","src/tools/unique_id.py"]
 }

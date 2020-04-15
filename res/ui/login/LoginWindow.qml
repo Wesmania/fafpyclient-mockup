@@ -7,6 +7,5 @@ import QtQuick.Layouts 1.3
 
 LoginWindowForm {
     loginButton.onPressed: loginController.login(loginTextbox.text, passwordTextbox.text)
-
 }
 
