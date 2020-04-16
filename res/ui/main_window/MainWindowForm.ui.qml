@@ -2,6 +2,7 @@ import QtQuick 2.4
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
+import '../news_tab'
 
 Item {
     id: element
@@ -88,5 +89,10 @@ Item {
         anchors.top: menuBarPane.bottom
         anchors.right: parent.right
         anchors.left: parent.left
+        anchors.bottom: parent.bottom
+        currentIndex: clientTabBar.currentIndex
+
+        News {
+        }
     }
 }
