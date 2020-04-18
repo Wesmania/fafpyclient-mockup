@@ -22,7 +22,7 @@ if __name__ == "__main__":
     news = News.build()
     lobby_server.login.logged_in.connect(news.fetch)
 
-    root_path = os.path.join(os.path.dirname(__file__), "..")
+    root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     qml_file = os.path.join(root_path, "res/ui/main_window/ToplevelWindow.qml")
 
     engine = QQmlApplicationEngine()

@@ -12,7 +12,6 @@ class QListModel(QAbstractListModel):
         return len(self.items)
 
     def data(self, index, role):
-        print(index.row())
         if role != Qt.DisplayRole:
             return None
         if not index.isValid() or index.row() >= len(self.items):
