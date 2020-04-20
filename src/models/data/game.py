@@ -1,0 +1,45 @@
+from enum import Enum
+from decorators import with_logger
+
+from model.base.item import ModelItem
+
+
+class GameState(Enum):
+    OPEN = "open"
+    PLAYING = "playing"
+    CLOSED = "closed"
+
+
+# This enum has a counterpart on the server
+class GameVisibility(Enum):
+    PUBLIC = "public"
+    FRIENDS = "friends"
+
+
+@with_logger
+class Game(ModelItem):
+    def __init__(self, id_):
+        ModelItem.__init__(self)
+
+        self.id = id_
+
+        self._add_obs("state", GameState.OPEN)
+        self._add_obs("launched_at", 0)
+        self._add_obs("num_players", 0)
+        self._add_obs("max_players", 0)
+        self._add_obs("title", "")
+        self._add_obs("host", None)
+        self._add_obs("mapname", "")
+        self._add_obs("map_file_path", "")
+        self._add_obs("teams", {})
+        self._add_obs("featured_mod", "")
+        self._add_obs("sim_mods", [])
+        self._add_obs("password_protected", False)
+        self._add_obs("visibility", GameVisibility.PUBLIC)
+
+    def id_key(self):
+        return self.id
+
+    @property
+    def players(self):
+        pass    # TODO, set of player logins
