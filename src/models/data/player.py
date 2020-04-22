@@ -1,5 +1,5 @@
 from rx.subject import Subject
-from model.base.item import ModelItem
+from models.base.item import ModelItem
 
 
 class Player(ModelItem):
@@ -8,15 +8,14 @@ class Player(ModelItem):
         self._current_player_game = current_player_game
 
         self.login = login
-
-        self.add_obs("id", 0)
-        self.add_obs("global_rating", (1500, 500))
-        self.add_obs("ladder_rating", (1500, 500))
-        self.add_obs("number_of_games", 0)
-        self.add_obs("avatar")
-        self.add_obs("country")
-        self.add_obs("clan")
-        self.add_obs("league")
+        self._add_obs("id", 0)
+        self._add_obs("global_rating", (1500, 500))
+        self._add_obs("ladder_rating", (1500, 500))
+        self._add_obs("number_of_games", 0)
+        self._add_obs("avatar")
+        self._add_obs("country")
+        self._add_obs("clan")
+        self._add_obs("league")
 
         self.obs_game = Subject()
 
@@ -32,5 +31,6 @@ class Player(ModelItem):
     # Unfortunately, games refer to players by login.
     # I have no idea how this plays with renaming, hopefully the server doesn't
     # change player names mid-session
+    @property
     def id_key(self):
         return self.login

@@ -29,6 +29,9 @@ class ModelSet:
     def remove(self, item):
         del self._items[item.id_key]
 
+    def clear(self):
+        self._items.clear()
+
 
 class Relation:
     def __init__(self, first_name, second_name):
@@ -50,6 +53,10 @@ class Relation:
             return self.by_second(idx)
         else:
             raise ValueError
+
+    def clear(self):
+        self._by_first.clear()
+        self._by_second.clear()
 
 
 class SingleRelation(Relation):

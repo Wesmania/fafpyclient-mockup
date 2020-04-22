@@ -1,17 +1,20 @@
 from PySide2.QtCore import QObject, Slot
 
 from news.wpapi import WPAPI
-from qt.model import QListModel
+from qt.model import QtListModel
 
 
-class NewsModel(QListModel):
+class NewsModel(QtListModel):
     @Slot(int, result='QVariant')
     def news_contents(self, idx):
         try:
-            item = self.items[idx]
+            item = self._items[idx]
         except IndexError:
             return {'title': '', 'body': ''}
         return item
+
+    def set_news(self, items):
+        self._set_list(items)
 
 
 class News(QObject):
@@ -33,4 +36,4 @@ class News(QObject):
         self._api.fetch()
 
     def _set_news(self, news_list):
-        self.model.set(news_list)
+        self.model.set_news(news_list)

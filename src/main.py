@@ -7,6 +7,8 @@ from PySide2.QtWebEngine import QtWebEngine
 
 from lobbyserver.server import LobbyServer
 from news.news import News
+from models import Models
+from gametab.gamemodel import GameListQtModel
 
 
 def get_app():
@@ -18,8 +20,10 @@ def get_app():
 if __name__ == "__main__":
     app = get_app()
 
-    lobby_server = LobbyServer.build("lobby.faforever.com", 8001)
+    lobby_server = LobbyServer("lobby.faforever.com", 8001)
     news = News.build()
+    models = Models(lobby_server)
+    qt_game_model = GameListQtModel(models.data.games)
     lobby_server.login.logged_in.connect(news.fetch)
 
     root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -31,6 +35,7 @@ if __name__ == "__main__":
     ctx.setContextProperty("loginController", lobby_server.login)
     ctx.setContextProperty("news", news)
     ctx.setContextProperty("news_model", news.model)
+    ctx.setContextProperty("game_model", qt_game_model)
     engine.load(qml_file)
 
     sys.exit(app.exec_())

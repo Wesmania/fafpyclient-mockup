@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.10.1, 2020-04-16T21:47:46. -->
+<!-- Written by QtCreator 4.10.1, 2020-04-23T01:00:09. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -100,11 +100,11 @@
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.1">
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Run /mnt/dane/gentoo-home/igor/Pobrane/faf/newclient/src/main.py</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Run </value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">main</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./mnt/dane/gentoo-home/igor/Pobrane/faf/newclient/src/main.py</value>
     <value type="QString" key="PythonEditor.RunConfiguation.Interpreter">/mnt/dane/gentoo-home/igor/Pobrane/faf/pysideenv/bin/python</value>
-    <value type="QString" key="PythonEditor.RunConfiguation.Script">/mnt/dane/gentoo-home/igor/Pobrane/faf/newclient/src/main.py</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Script"></value>
     <value type="QString" key="RunConfiguration.Arguments"></value>
     <value type="uint" key="RunConfiguration.QmlDebugServerPort">3768</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
@@ -116,11 +116,11 @@
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.2">
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Run /mnt/dane/gentoo-home/igor/Pobrane/faf/newclient/tests/news/test.py</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Run </value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">news test</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./mnt/dane/gentoo-home/igor/Pobrane/faf/newclient/tests/news/test.py</value>
     <value type="QString" key="PythonEditor.RunConfiguation.Interpreter">/mnt/dane/gentoo-home/igor/Pobrane/faf/pysideenv/bin/python</value>
-    <value type="QString" key="PythonEditor.RunConfiguation.Script">/mnt/dane/gentoo-home/igor/Pobrane/faf/newclient/tests/news/test.py</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Script"></value>
     <value type="QString" key="RunConfiguration.Arguments"></value>
     <value type="uint" key="RunConfiguration.QmlDebugServerPort">3768</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>

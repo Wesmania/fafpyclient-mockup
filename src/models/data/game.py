@@ -1,7 +1,5 @@
 from enum import Enum
-from decorators import with_logger
-
-from model.base.item import ModelItem
+from models.base.item import ModelItem
 
 
 class GameState(Enum):
@@ -16,7 +14,6 @@ class GameVisibility(Enum):
     FRIENDS = "friends"
 
 
-@with_logger
 class Game(ModelItem):
     def __init__(self, id_):
         ModelItem.__init__(self)
@@ -28,7 +25,7 @@ class Game(ModelItem):
         self._add_obs("num_players", 0)
         self._add_obs("max_players", 0)
         self._add_obs("title", "")
-        self._add_obs("host", None)
+        self._add_obs("host", "")
         self._add_obs("mapname", "")
         self._add_obs("map_file_path", "")
         self._add_obs("teams", {})
@@ -37,9 +34,12 @@ class Game(ModelItem):
         self._add_obs("password_protected", False)
         self._add_obs("visibility", GameVisibility.PUBLIC)
 
+    @property
     def id_key(self):
         return self.id
 
     @property
     def players(self):
-        pass    # TODO, set of player logins
+        if self.teams is None:
+            return set()
+        return set(name for team in self.teams.values() for name in team)
