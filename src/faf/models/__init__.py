@@ -1,9 +1,6 @@
-from models.base.set import ModelSet
-from models.base.player import PlayerCurrentGameRelation
-
-from models.control.game import ModelGameUpdater
-from models.control.player import ModelPlayerUpdater
-from models.control.login import ModelLoginUpdater
+from faf.models.base import ModelSet, PlayerCurrentGameRelation
+from faf.models.control import ModelGameUpdater, ModelPlayerUpdater, \
+    ModelLoginUpdater
 
 
 class ModelData:

@@ -5,10 +5,10 @@ from PySide2.QtGui import QGuiApplication
 from PySide2.QtQml import QQmlApplicationEngine
 from PySide2.QtWebEngine import QtWebEngine
 
-from lobbyserver.server import LobbyServer
-from news.news import News
-from models import Models
-from gametab.gamemodel import GameListQtModel
+from faf.lobbyserver import LobbyServer
+from faf.news import News
+from faf.models import Models
+from faf.gametab.gamemodel import GameListQtModel
 
 
 def get_app():

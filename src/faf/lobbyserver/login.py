@@ -1,9 +1,9 @@
 from enum import Enum
 from PySide2.QtCore import QObject, Signal, Slot
 
-from lobbyserver.connection import ConnectionState
-from lobbyserver.messages.login import LoginMessage
-from tools import unique_id
+from faf.lobbyserver.connection import ConnectionState
+from faf.lobbyserver.messages import LoginMessage
+from faf.tools import unique_id
 
 
 class LoginState(Enum):

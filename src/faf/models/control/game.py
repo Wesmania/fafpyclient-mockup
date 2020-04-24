@@ -1,4 +1,4 @@
-from models.data.game import Game, GameState
+from faf.models.data.game import Game, GameState
 
 
 class ModelGameUpdater:

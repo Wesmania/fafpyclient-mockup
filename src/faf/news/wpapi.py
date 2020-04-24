@@ -1,10 +1,6 @@
 from PySide2.QtNetwork import QNetworkAccessManager, QNetworkRequest
 from PySide2.QtCore import QObject, QUrl, Signal
-from collections import namedtuple
 import json
-
-
-from PySide2.QtCore import qDebug
 
 
 # FIXME: Make setting

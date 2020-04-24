@@ -1,4 +1,4 @@
-from models.data.player import Player
+from faf.models.data.player import Player
 
 
 class ModelPlayerUpdater:

@@ -1,5 +1,5 @@
 from rx import operators as ops
-from models.data.game import GameVisibility, GameState
+from faf.models.data.game import GameVisibility, GameState
 
 
 class GameMessage:

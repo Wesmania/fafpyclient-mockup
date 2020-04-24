@@ -2,7 +2,7 @@ from enum import Enum
 from rx import operators as ops
 from PySide2.QtCore import Qt
 
-from qt.model import QtListModel
+from faf.qt import QtListModel
 
 
 class GameRoles(Enum):

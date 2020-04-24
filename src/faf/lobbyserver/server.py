@@ -1,8 +1,7 @@
-from lobbyserver.connection import LobbyConnection
-from lobbyserver.protocol import LobbyProtocol
-from lobbyserver.login import LobbyLogin
-from lobbyserver.messages.games import GameMessage
-from lobbyserver.messages.players import PlayerMessage
+from faf.lobbyserver.connection import LobbyConnection
+from faf.lobbyserver.protocol import LobbyProtocol
+from faf.lobbyserver.login import LobbyLogin
+from faf.lobbyserver.messages import GameMessage, PlayerMessage
 
 
 class LobbyServer:

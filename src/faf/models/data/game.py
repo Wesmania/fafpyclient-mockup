@@ -2,7 +2,7 @@ from enum import Enum
 import rx
 from rx import operators as ops
 from rx.subject import Subject
-from models.base.item import ModelItem
+from faf.models.base import ModelItem
 
 
 class GameState(Enum):

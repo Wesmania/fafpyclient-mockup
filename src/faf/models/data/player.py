@@ -1,5 +1,5 @@
 from rx.subject import Subject
-from models.base.item import ModelItem
+from faf.models.base import ModelItem
 
 
 class Player(ModelItem):

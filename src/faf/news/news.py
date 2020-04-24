@@ -1,7 +1,7 @@
 from PySide2.QtCore import QObject, Slot
 
-from news.wpapi import WPAPI
-from qt.model import QtListModel
+from faf.news.wpapi import WPAPI
+from faf.qt import QtListModel
 
 
 class NewsModel(QtListModel):
