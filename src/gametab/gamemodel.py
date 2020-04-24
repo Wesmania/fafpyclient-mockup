@@ -18,6 +18,7 @@ class GameListQtModel(QtListModel):
     def __init__(self, games):
         QtListModel.__init__(self)
         self._games = games
+
         games.added.subscribe(self._add_game)
         games.removed.subscribe(self._remove_game)
         games.cleared.subscribe(self._clear_games)
@@ -69,8 +70,11 @@ class GameListQtModel(QtListModel):
             return game.host
 
     def _update_stream(self, stream_selector):
+
         def select(game):
-            return stream_selector(game).pipe(ops.map(lambda _: game))
+            return stream_selector(game).pipe(
+                ops.map(lambda _: game)
+            )
 
         return self._games.added.pipe(
             ops.map(select),

@@ -20,7 +20,7 @@ class ModelItem:
 
         setattr(self, f"_obs_{name}", subject)
         setattr(self, f"obs_{name}", uniq_subject)
-        setattr(self, name, property(getobs, setobs))
+        setattr(self.__class__, name, property(getobs, setobs))
         self._data_fields.append(name)
 
     def field_dict(self):
