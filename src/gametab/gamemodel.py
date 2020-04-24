@@ -1,5 +1,4 @@
 from enum import Enum
-import rx
 from rx import operators as ops
 from PySide2.QtCore import Qt
 
@@ -8,10 +7,11 @@ from qt.model import QtListModel
 
 class GameRoles(Enum):
     title = 0
-    mod = 1
-    players = 2
-    avg_rating = 3
-    host = 4
+    featured_mod = 1
+    num_players = 2
+    max_players = 3
+    average_rating = 4
+    host = 5
 
 
 class GameListQtModel(QtListModel):
@@ -23,14 +23,9 @@ class GameListQtModel(QtListModel):
         games.removed.subscribe(self._remove_game)
         games.cleared.subscribe(self._clear_games)
 
-        self._update_roles_at(lambda g: g.obs_title, [GameRoles.title])
-        self._update_roles_at(lambda g: g.obs_featured_mod, [GameRoles.mod])
-        self._update_roles_at(
-            lambda g: rx.merge(
-                g.obs_num_players,
-                g.obs_max_players),
-            [GameRoles.players])
-        self._update_roles_at(lambda g: g.obs_host, [GameRoles.host])
+        for role in GameRoles:
+            self._update_roles_at(lambda g: getattr(g, f"obs_{role.name}"),
+                                  role)
 
     def _add_game(self, game):
         self._add(game.id_key, game)
@@ -57,17 +52,7 @@ class GameListQtModel(QtListModel):
         if rnum < 0 or rnum >= len(GameRoles):
             return None
         role = GameRoles(rnum)
-
-        if role is GameRoles.title:
-            return game.title
-        if role is GameRoles.mod:
-            return game.featured_mod
-        if role is GameRoles.players:
-            return f"{game.num_players}/{game.max_players}"
-        if role is GameRoles.avg_rating:
-            return 1000     # TODO
-        if role is GameRoles.host:
-            return game.host
+        return getattr(game, role.name)
 
     def _update_stream(self, stream_selector):
 
@@ -81,7 +66,6 @@ class GameListQtModel(QtListModel):
             ops.merge_all()
         )
 
-    def _update_roles_at(self, stream_selector, roles):
-        role_values = [r.value for r in roles]
+    def _update_roles_at(self, stream_selector, role):
         self._update_stream(stream_selector).subscribe(
-            lambda g: self._update(g, role_values))
+            lambda g: self._update(g, role.value))

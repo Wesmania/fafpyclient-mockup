@@ -28,6 +28,11 @@ class Player(ModelItem):
         ModelItem.complete(self)
         self.obs_game.on_completed()
 
+    @property
+    def rating_estimate(self):
+        "Conservative estimate of the players global trueskill rating."
+        return max(0, (self.global_rating[0] - 3 * self.global_rating[1]))
+
     # Unfortunately, games refer to players by login.
     # I have no idea how this plays with renaming, hopefully the server doesn't
     # change player names mid-session

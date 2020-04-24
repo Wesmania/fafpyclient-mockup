@@ -19,7 +19,7 @@ class ModelPlayerUpdater:
         return self._models.current_player_game
 
     def _on_player_msg(self, msg):
-        self.add_or_update_player(msg["id"], msg)
+        self.add_or_update_player(msg["login"], msg)
 
     def add_or_update_player(self, pid, attrs):
         if pid not in self._games:
@@ -32,6 +32,9 @@ class ModelPlayerUpdater:
         player.update(attrs)
         self._players.add(player)
         self._players.added.on_next(player)
+        player_game = self._current_player_game.get(pid)
+        if player_game is not None:
+            player_game._player_came_online()
 
     def _update_player(self, pid, attrs):
         if pid not in self._players:

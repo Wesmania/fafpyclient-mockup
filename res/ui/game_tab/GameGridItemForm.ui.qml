@@ -30,7 +30,7 @@ Item {
             anchors.top: gameTitle.bottom
             anchors.left: gameMap.right
             anchors.right: parent.right
-            text: mod
+            text: featured_mod
             font.pointSize: 10
         }
 
@@ -38,7 +38,7 @@ Item {
             id: gamePlayers
             anchors.top: gameMod.bottom
             anchors.left: gameMap.right
-            text: players
+            text: num_players + "/" + max_players
             font.pointSize: 12
         }
 
@@ -46,7 +46,7 @@ Item {
             id: gameAvgRating
             anchors.top: gameMod.bottom
             anchors.right: parent.right
-            text: avg_rating
+            text: average_rating
             font.pointSize: 12
         }
 

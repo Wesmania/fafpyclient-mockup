@@ -34,7 +34,7 @@ class ModelGameUpdater:
             self._players[pid].obs_game.on_next(game)
 
     def _add_game(self, gid, attrs):
-        game = Game(gid)
+        game = Game(gid, self._players)
         game.update(attrs)
         if game.state is GameState.CLOSED:
             return
