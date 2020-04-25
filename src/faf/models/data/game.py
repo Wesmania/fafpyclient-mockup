@@ -45,7 +45,7 @@ class Game(ModelItem):
 
         # Misses (rare) cases when a player's rating changes. Not a problem.
         self.obs_average_rating = self.obs_teams.pipe(
-            ops.map(lambda _: self.average_rating())
+            ops.map(lambda _: self.average_rating)
         )
 
     def _player_came_online(self):

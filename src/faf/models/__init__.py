@@ -1,6 +1,7 @@
 from faf.models.base import ModelSet, PlayerCurrentGameRelation
 from faf.models.control import ModelGameUpdater, ModelPlayerUpdater, \
     ModelLoginUpdater
+from faf.models.qt import GamesQtModel
 
 
 class ModelData:
@@ -25,7 +26,13 @@ class ModelControl:
         self.login_updater = ModelLoginUpdater(data, lobby_server.login)
 
 
+class QtModels:
+    def __init__(self, model_data):
+        self.games = GamesQtModel(model_data.games)
+
+
 class Models:
     def __init__(self, lobby_server):
         self.data = ModelData()
         self.control = ModelControl(self.data, lobby_server)
+        self.qt = QtModels(self.data)

@@ -15,10 +15,15 @@ class QtListModel(QAbstractListModel):
             return 0
         return len(self._itemlist)
 
-    def data(self, index, role):
+    def item_at(self, index):
         if not index.isValid() or index.row() >= len(self._itemlist):
             return None
-        item = self._itemlist[index.row()]
+        return self._itemlist[index.row()]
+
+    def data(self, index, role):
+        item = self.item_at(index)
+        if item is None:
+            return None
         return self.role(item, role)
 
     def _add(self, key, item):
