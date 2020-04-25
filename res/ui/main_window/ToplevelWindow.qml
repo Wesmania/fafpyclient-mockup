@@ -18,7 +18,7 @@ ToplevelWindowTempl {
     }
 
     Component.onCompleted: {
-        loginController.logged_in.connect(mainWindowForm.hideLoginPane)
-        loginController.logged_out.connect(mainWindowForm.showLoginPane)
+        faf__server__login.logged_in.connect(mainWindowForm.hideLoginPane)
+        faf__server__login.logged_out.connect(mainWindowForm.showLoginPane)
     }
 }

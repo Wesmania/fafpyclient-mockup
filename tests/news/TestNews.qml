@@ -9,6 +9,6 @@ ToplevelWindowTempl {
 	}
 
     Component.onCompleted: {
-    	news.fetch()
+    	faf__news.fetch()
     }
 }

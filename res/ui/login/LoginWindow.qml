@@ -6,6 +6,6 @@ import QtQuick.Controls.Material 2.13
 import QtQuick.Layouts 1.3
 
 LoginWindowForm {
-    loginButton.onPressed: loginController.login(loginTextbox.text, passwordTextbox.text)
+    loginButton.onPressed: faf__server__login.login(loginTextbox.text, passwordTextbox.text)
 }
 

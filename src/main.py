@@ -20,8 +20,11 @@ def get_app():
 if __name__ == "__main__":
     app = get_app()
 
-    lobby_server = LobbyServer("lobby.faforever.com", 8001)
-    news = News.build()
+    engine = QQmlApplicationEngine()
+    ctx = engine.rootContext()
+
+    lobby_server = LobbyServer("lobby.faforever.com", 8001, ctx)
+    news = News.build(ctx)
     models = Models(lobby_server)
     qt_game_model = GameListQtModel(models.data.games)
     lobby_server.login.logged_in.connect(news.fetch)
@@ -29,12 +32,7 @@ if __name__ == "__main__":
     root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     qml_file = os.path.join(root_path, "res/ui/main_window/ToplevelWindow.qml")
 
-    engine = QQmlApplicationEngine()
-    ctx = engine.rootContext()
     ctx.setContextProperty("ROOT_PATH", root_path)
-    ctx.setContextProperty("loginController", lobby_server.login)
-    ctx.setContextProperty("news", news)
-    ctx.setContextProperty("news_model", news.model)
     ctx.setContextProperty("game_model", qt_game_model)
     engine.load(qml_file)
 

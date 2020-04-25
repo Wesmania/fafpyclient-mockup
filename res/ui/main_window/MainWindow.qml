@@ -4,5 +4,5 @@ import QtQuick.Controls.Material 2.13
 import QtQuick.Layouts 1.3
 
 MainWindowForm {
-    logoutButton.onClicked: loginController.logout()
+    logoutButton.onClicked: faf__server__login.logout()
 }
