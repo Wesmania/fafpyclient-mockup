@@ -1,5 +1,7 @@
 import sys
 import os
+import asyncio
+from asyncqt import QEventLoop
 
 from PySide2.QtGui import QGuiApplication
 from PySide2.QtQml import QQmlApplicationEngine
@@ -17,8 +19,14 @@ def get_app():
     return QGuiApplication(sys.argv)
 
 
+def set_loop(app):
+    loop = QEventLoop(app)
+    asyncio.set_event_loop(loop)
+
+
 if __name__ == "__main__":
     app = get_app()
+    set_loop(app)
 
     engine = QQmlApplicationEngine()
     ctx = engine.rootContext()
@@ -36,4 +44,6 @@ if __name__ == "__main__":
     ctx.setContextProperty("game_model", qt_game_model)
     engine.load(qml_file)
 
-    sys.exit(app.exec_())
+    loop = asyncio.get_event_loop()
+    with loop:
+        sys.exit(loop.run_forever())
