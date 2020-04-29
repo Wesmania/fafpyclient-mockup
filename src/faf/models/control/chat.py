@@ -1,11 +1,14 @@
 from faf.models.data.channel import Channel, ChannelID
 from faf.models.data.chatter import Chatter, IRCMode
+from faf.models.data.chatline import ChatLine, ChatLineType
+from faf.irc.ctcp import ctcp_dequote
 
 
 class ModelChatUpdater:
-    def __init__(self, models, irc):
+    def __init__(self, models, irc, chat_filter):
         self._models = models
         self._irc = irc
+        self._chat_filter = chat_filter
 
         self._irc.on('CLIENT_DISCONNECT', self.on_disconnect)
         self._irc.on('RPL_NAMREPLY', self.on_names)
@@ -13,10 +16,11 @@ class ModelChatUpdater:
         self._irc.on('QUIT', self.on_quit)
         self._irc.on('PART', self.on_part)
         self._irc.on('RPL_TOPIC', self.on_topic)
-        self._irc.on('MESSAGE', self.on_message)
         self._irc.on('PRIVMSG', self.on_privmsg)
         self._irc.on('ACTION', self.on_action)
+        self._irc.on('NOTICE', self.on_notice)
         self._irc.on('USERMODE', self.on_usermode)
+        self._irc.on('RENAME', self.on_rename)
 
     @property
     def _players(self):
@@ -121,20 +125,67 @@ class ModelChatUpdater:
         channel = self._chat[channel_id]
         channel.topic = message
 
-    # TODO - on rename
+    def on_rename(self, nick, new_nick, **kwargs):
+        nick = IRCMode.strip(nick)
+        new_nick = IRCMode.strip(new_nick)
+        for c in self._chat:
+            ch = self._chat[c]
+            if nick not in ch.chatters:
+                continue
+            chatter = ch.chatters[nick]
+            ch.chatters.remove(chatter)
+            chatter.nick = new_nick
+            ch.chatters.add(chatter)
 
-    def on_message(self, **kwargs):
-        # TODO
-        pass
+    def on_privmsg(self, nick, target, message, **kwargs):
+        nick = IRCMode.strip(nick)
+        if self._chat_filter.should_ignore_chatter(nick):
+            return
+        messages = ctcp_dequote(message)
+        for msg in messages:
+            if isinstance(msg, tuple):
+                self._on_action(nick, target, msg, **kwargs)
+            else:
+                self._on_msg(nick, target, msg, ChatLineType.MESSAGE)
 
-    def on_privmsg(self, **kwargs):
-        # TODO
-        pass
+    def on_notice(self, nick, target, message, **kwargs):
+        nick = IRCMode.strip(nick)
+        if self._chat_filter.should_ignore_chatter(nick):
+            return
+        self._on_msg(nick, target, ChatLineType.NOTICE)
 
-    def on_action(self, **kwargs):
-        # TODO
-        pass
+    def _on_action(self, nick, target, message, **kwargs):
+        if message[0] != 'ACTION':
+            return
+        if len(message) < 2:
+            return
+        self._on_msg(nick, target, message[1], ChatLineType.ACTION)
 
+    def _on_msg(self, nick, target, text, type_):
+        if target in self._chat:
+            channel = self._chat[target]
+            self._on_public_msg(nick, channel, text, type_)
+        elif target == self._irc.my_username:
+            self._on_private_msg(nick, text, type_)
+
+    def _on_public_msg(self, nick, channel, text, type_):
+        if nick not in channel.chatters:
+            return
+        chatter = channel.chatters[nick]
+        line = ChatLine(self, chatter, text, type_)
+        channel.lines.add(line)
+
+    def _on_private_msg(self, nick, text, type_):
+        cid = ChannelID.private(nick)
+        self._add_channel(cid)
+        channel = self._chat[cid]
+        self._add_or_update_from_name(channel, nick)
+        self._add_or_update_from_name(channel, self._irc.my_username)
+        chatter = channel.chatters[nick]
+        line = ChatLine(self, chatter, text, type_)
+        channel.lines.add(line)
+
+    # Interface for player model updater.
     def on_player_added(self, player):
         name = player.login
         for channel in self._chat:

@@ -62,9 +62,9 @@ MODES = {
 
 
 class Chatter(ModelItem):
-    def __init__(self, name):
+    def __init__(self, nick):
         ModelItem.__init__(self)
-        self.name = name    # When renaming, just remove and add.
+        self.nick = nick    # When renaming, just remove and add.
         self._add_obs('mode', IRCMode(0))
         self._add_obs('player', None)
 
@@ -74,3 +74,7 @@ class Chatter(ModelItem):
         c = cls(IRCMode.strip(nick))
         c.mode = mode
         return c
+
+    @property
+    def id_key(self):
+        return self.nick

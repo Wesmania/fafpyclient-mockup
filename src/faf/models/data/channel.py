@@ -28,15 +28,52 @@ class ChannelID:
         return cls(ChannelType.PUBLIC, name)
 
 
+class Lines:
+    # TODO config
+    MAX_LINES = 300
+    REMOVE_BATCH = 50
+
+    def __init__(self):
+        self.lines = []
+        self.added = Subject()
+        self.removed = Subject()
+
+    def add(self, line):
+        self._lines.append(line)
+        self.added.on_next(line)
+        self._check_trim()
+
+    def clear(self):
+        ll = len(self)
+        self._lines.clear()
+        self.removed.on_next(ll)
+
+    def _check_trim(self):
+        if len(self) > self.MAX_LINES:
+            self.lines = self.lines[self.REMOVE_BATCH:]
+            self.removed.on_next(self.REMOVE_BATCH)
+
+    def __getitem__(self, n):
+        return self._lines[n]
+
+    def __iter__(self):
+        return iter(self._lines)
+
+    def __len__(self):
+        return len(self._lines)
+
+    def complete(self):
+        self.added.on_completed()
+        self.removed.on_completed()
+
+
 class Channel(ModelItem):
     def __init__(self, id_):
         ModelItem.__init__(self)
         self.id = id_
 
         self._add_obs("topic", "")
-        self.lines = []
-        self.line_added = Subject()
-        self.lines_removed = Subject()
+        self.lines = Lines()
         self.chatters = ModelSet()
 
     @property
@@ -45,6 +82,5 @@ class Channel(ModelItem):
 
     def complete(self):
         ModelItem.complete(self)
-        self.line_added.on_completed()
-        self.lines_removed.on_completed()
+        self.lines.complete()
         self.chatters.complete()

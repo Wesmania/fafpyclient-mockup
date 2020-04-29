@@ -1,6 +1,7 @@
 from bottom.client import Client
 import asyncio
 import sys
+from ctcp import ctcp_dequote
 
 
 class Irc:
@@ -16,7 +17,6 @@ class Irc:
         self.c.on('QUIT')(self.on_quit)
         self.c.on('PART')(self.on_part)
         self.c.on('RPL_TOPIC')(self.on_topic)
-        self.c.on('MESSAGE')(self.on_message)
         self.c.on('PRIVMSG')(self.on_privmsg)
         self.c.on('ACTION')(self.on_action)
         self.c.on('USERMODE')(self.on_usermode)
@@ -45,7 +45,7 @@ class Irc:
         self.c.send('NICK', nick=self.username)
         self.c.send('USER', user=self.username, realname=self.username)
         await self._wait_on_motd()
-        self.c.send('JOIN', channel="#aeolus")
+        self.c.send('JOIN', channel="#foobar")
 
     async def on_disconnect(self, **kwargs):
         # TODO
@@ -76,12 +76,9 @@ class Irc:
         # TODO
         print(f"Notice: {kwargs}")
 
-    async def on_message(self, **kwargs):
-        # TODO
-        print(f"Message: {kwargs}")
-
     async def on_privmsg(self, **kwargs):
         # TODO
+        kwargs['message'] = ctcp_dequote(kwargs['message'])
         print(f"Privmsg: {kwargs}")
 
     async def on_action(self, **kwargs):
