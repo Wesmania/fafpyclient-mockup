@@ -2,8 +2,9 @@ from faf.models.data.player import Player
 
 
 class ModelPlayerUpdater:
-    def __init__(self, models, player_msg):
+    def __init__(self, models, player_msg, chat_updater):
         self._models = models
+        self._chat_updater = chat_updater
         player_msg.new.subscribe(self._on_player_msg)
 
     @property
@@ -36,6 +37,10 @@ class ModelPlayerUpdater:
         if player_game is not None:
             player_game._player_came_online()
 
+        # This can emit events later, since game/player have no connection to
+        # chatters
+        self._chat_updater.on_player_added(player)
+
     def _update_player(self, pid, attrs):
         if pid not in self._players:
             return
@@ -49,3 +54,5 @@ class ModelPlayerUpdater:
         self._players.remove(player)
         self._players.removed.on_next(player)
         player.complete()
+
+        self._chat_updater.on_player_removed(player)

@@ -32,54 +32,7 @@ class ModelSet:
     def clear(self):
         self._items.clear()
 
-
-class Relation:
-    def __init__(self, first_name, second_name):
-        self._first_name = first_name
-        self._second_name = second_name
-        self._by_first = {}
-        self._by_second = {}
-
-    def by_first(self, idx):
-        return self._by_first.get(idx)
-
-    def by_second(self, idx):
-        return self._by_second.get(idx)
-
-    def by(self, name, idx):
-        if name == self._first_name:
-            return self.by_first(idx)
-        elif name == self._second_name:
-            return self.by_second(idx)
-        else:
-            raise ValueError
-
-    def clear(self):
-        self._by_first.clear()
-        self._by_second.clear()
-
-
-class SingleRelation(Relation):
-    # Returns two lists indicating which items changed.
-    def add(self, first, second):
-        old_second = self._by_first.get(first)
-        old_first = self._by_second.get(second)
-        if second is old_second:
-            return ([], [])
-
-        self._by_first[first] = second
-        self._by_second[second] = first
-        if old_second is not None:
-            del self._by_first[old_first]
-            del self._by_second[old_second]
-
-        firsts = [e for e in [first, old_first] if e is not None]
-        seconds = [e for e in [second, old_second] if e is not None]
-        return (firsts, seconds)
-
-    def remove(self, first, second):
-        if self._by_first.get(first) is None:
-            return ([], [])
-        del self._by_first[first]
-        del self._by_second[second]
-        return ([first], [second])
+    def complete(self):
+        self.added.on_completed()
+        self.removed.on_completed()
+        self.cleared.on_completed()
