@@ -44,39 +44,45 @@ class LoginProcess:
         self.state = LoginState.LOGGING_IN
         task = self._perform_login(login, password)
         self._login_task = asyncio.get_event_loop().create_task(task)
+        self._login_task.add_done_callback(self._ignore_cancellation)
 
     def logout(self):
         self._connection.disconnect_()
 
     async def _perform_login(self, login, password):
-        self._connection.connect_()
-        await self._connection.state_stream.pipe(
-            ops.skip_while(lambda s: s is not ConnectionState.CONNECTED),
-            ops.first()
-        )
         try:
+            self._connection.connect_()
+            await self._connection.state_stream.pipe(
+                ops.skip_while(lambda s: s is not ConnectionState.CONNECTED),
+                ops.first()
+            )
             result = await self._login_message.perform_login(login, password,
                                                              self._unique_id)
             self.obs_auth_results.on_next((True, result))
             self.state = LoginState.LOGGED_IN
         except AuthError as e:
             self.obs_auth_results.on_next((False, e.args[0]))    # TODO
-            self._connection.disconnect()
+            self._connection.disconnect_()
         except ConnectionError:
-            self._connection.disconnect()
+            self._connection.disconnect_()
 
     def _on_conn_state(self, state):
         if self.state is LoginState.LOGGED_OUT:
             return
         if state is not ConnectionState.DISCONNECTED:
             return
-
         if self._login_task is not None:
             if not self._login_task.done():
                 self._login_task.cancel()
             self._login_task = None
-
         self.state = LoginState.LOGGED_OUT
+
+    # TODO move to tools
+    def _ignore_cancellation(self, f):
+        try:
+            f.result()
+        except asyncio.CancelledError:
+            pass
 
 
 class LobbyLogin(QObject):
