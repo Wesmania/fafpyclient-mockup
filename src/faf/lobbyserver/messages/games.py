@@ -1,28 +1,35 @@
 from rx import operators as ops
+from rx.scheduler.mainloop import QtScheduler
+from PySide2 import QtCore
 from faf.models.data.game import GameVisibility, GameState
 
 
 class GameMessage:
     def __init__(self, protocol):
+        # See comment in players.py.
+        self._aio_scheduler = QtScheduler(QtCore)
         messages = protocol.register("game_info")
         self.new = messages.pipe(
-            ops.flat_map(self._handle_game_info),
-            ops.map(self._process_game),
+            ops.flat_map(self._split_game_info),
+            ops.observe_on(self._aio_scheduler),
+            ops.flat_map(self._process_game),
             ops.filter(lambda x: x is not None),
         )
 
-    # TODO validate
-    def _handle_game_info(self, msgs):
+    def _split_game_info(self, msgs):
         cmd, msg = msgs
         if "games" in msg:
-            return msg["games"]
+            games = msg["games"]
+            for i in range(0, len(games), 10):
+                yield games[i:i+10]
         else:
-            return [msg]
+            yield [msg]
 
-    def _process_game(self, msg):
-        try:
-            msg["state"] = GameState(msg["state"])
-            msg["visibility"] = GameVisibility(msg["visibility"])
-            return msg
-        except (KeyError, ValueError):
-            return None
+    def _process_game(self, msgs):
+        for msg in msgs:
+            try:
+                msg["state"] = GameState(msg["state"])
+                msg["visibility"] = GameVisibility(msg["visibility"])
+                yield msg
+            except (KeyError, ValueError):
+                pass

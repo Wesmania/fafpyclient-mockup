@@ -1,4 +1,5 @@
-from faf.models.base import ModelSet, PlayerCurrentGameRelation
+from faf.models.base import ModelSet
+from faf.models.base.player import PlayerCurrentGameRelation
 from faf.models.control import ModelGameUpdater, ModelPlayerUpdater, \
     ModelChatUpdater
 from faf.models.qt import GamesQtModel
