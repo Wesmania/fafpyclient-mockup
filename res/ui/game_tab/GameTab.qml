@@ -1,5 +1,5 @@
 import QtQuick 2.4
 
 GameTabForm {
-    gameModel: game_model
+    gameModel: faf__tabs__games__model
 }

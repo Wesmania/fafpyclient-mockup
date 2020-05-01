@@ -1,6 +1,6 @@
 from PySide2.QtCore import QObject, Slot
 
-from faf.news.wpapi import WPAPI
+from faf.tabs.news.wpapi import WPAPI
 from faf.qt import QtListModel
 
 
@@ -17,24 +17,18 @@ class NewsModel(QtListModel):
         self._set_list(items)
 
 
-class News(QObject):
-    def __init__(self, api, model, login_session, qml_context):
+class NewsTab(QObject):
+    def __init__(self, login_session, qml_context):
         QObject.__init__(self)
-        self._api = api
         self._login_session = login_session
-        self.model = model
+        self._api = WPAPI()
+        self.model = NewsModel()
 
         self._login_session.login.logged_in.connect(self.fetch)
         self._api.done.connect(self._set_news)
 
-        qml_context.setContextProperty("faf__news", self)
-        qml_context.setContextProperty("faf__news__model", self.model)
-
-    @classmethod
-    def build(cls, login_session, qml_context):
-        api = WPAPI()
-        model = NewsModel()
-        return cls(api, model, login_session, qml_context)
+        qml_context.setContextProperty("faf__tabs__news", self)
+        qml_context.setContextProperty("faf__tabs__news__model", self.model)
 
     @Slot()
     def fetch(self):

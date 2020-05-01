@@ -13,10 +13,10 @@ NewsForm {
 </div>
 </body>
 '
-    newsModel: faf__news__model
+    newsModel: faf__tabs__news__model
     newsList.onCurrentIndexChanged: {
         var idx = newsList.currentIndex
-        var contents = faf__news__model.news_contents(idx)
+        var contents = newsModel.news_contents(idx)
         newsMainView.loadHtml(html_template.arg(contents['title']).arg(contents['body']))
     }
 

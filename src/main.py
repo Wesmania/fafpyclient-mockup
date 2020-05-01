@@ -9,9 +9,10 @@ from PySide2.QtWebEngine import QtWebEngine
 
 from faf.lobbyserver import LobbyServer
 from faf.session import LoginSession
-from faf.news import News
+from faf.tabs.news import NewsTab
+from faf.tabs.games import GamesTab
 from faf.models import Models
-from faf.gametab.gamemodel import LobbyGamesModel
+from faf.tabs.games.gamemodel import LobbyGamesModel
 from faf.irc.irc import Irc
 
 
@@ -38,14 +39,13 @@ if __name__ == "__main__":
     models = Models(lobby_server, irc)
 
     login_session = LoginSession(lobby_server, irc, models, ctx)
-    news = News.build(login_session, ctx)
-    qt_game_model = LobbyGamesModel(models.qt.games)
+    news = NewsTab(login_session, ctx)
+    games = GamesTab(models, ctx)
 
     root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     qml_file = os.path.join(root_path, "res/ui/main_window/ToplevelWindow.qml")
 
     ctx.setContextProperty("ROOT_PATH", root_path)
-    ctx.setContextProperty("game_model", qt_game_model)
     engine.load(qml_file)
 
     loop = asyncio.get_event_loop()
