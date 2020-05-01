@@ -10,7 +10,7 @@ class ModelChatUpdater:
         self._irc = irc
         self._chat_filter = chat_filter
 
-        self._irc.on('CLIENT_DISCONNECT', self.on_disconnect)
+        self._irc.disconnected.connect(self.on_disconnect)
         self._irc.on('RPL_NAMREPLY', self.on_names)
         self._irc.on('JOIN', self.on_join)
         self._irc.on('QUIT', self.on_quit)

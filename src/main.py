@@ -11,6 +11,7 @@ from faf.lobbyserver import LobbyServer
 from faf.news import News
 from faf.models import Models
 from faf.gametab.gamemodel import LobbyGamesModel
+from faf.irc.irc import Irc
 
 
 def get_app():
@@ -35,6 +36,8 @@ if __name__ == "__main__":
     news = News.build(ctx)
     models = Models(lobby_server)
     qt_game_model = LobbyGamesModel(models.qt.games)
+
+    irc = Irc('irc.faforever.com', 6667)
     lobby_server.login.logged_in.connect(news.fetch)
 
     root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
