@@ -8,6 +8,7 @@ from PySide2.QtQml import QQmlApplicationEngine
 from PySide2.QtWebEngine import QtWebEngine
 
 from faf.lobbyserver import LobbyServer
+from faf.session import LoginSession
 from faf.news import News
 from faf.models import Models
 from faf.gametab.gamemodel import LobbyGamesModel
@@ -32,13 +33,13 @@ if __name__ == "__main__":
     engine = QQmlApplicationEngine()
     ctx = engine.rootContext()
 
-    lobby_server = LobbyServer("lobby.faforever.com", 8001, ctx)
-    news = News.build(ctx)
-    models = Models(lobby_server)
-    qt_game_model = LobbyGamesModel(models.qt.games)
-
+    lobby_server = LobbyServer("lobby.faforever.com", 8001)
     irc = Irc('irc.faforever.com', 6667)
-    lobby_server.login.logged_in.connect(news.fetch)
+    models = Models(lobby_server, irc)
+
+    login_session = LoginSession(lobby_server, irc, models, ctx)
+    news = News.build(login_session, ctx)
+    qt_game_model = LobbyGamesModel(models.qt.games)
 
     root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     qml_file = os.path.join(root_path, "res/ui/main_window/ToplevelWindow.qml")

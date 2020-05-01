@@ -38,29 +38,29 @@ class Lines:
         self.added = Subject()
         self.removed = Subject()
 
+    def __getitem__(self, n):
+        return self.lines[n]
+
+    def __iter__(self):
+        return iter(self.lines)
+
+    def __len__(self):
+        return len(self.lines)
+
     def add(self, line):
-        self._lines.append(line)
+        self.lines.append(line)
         self.added.on_next(line)
         self._check_trim()
 
     def clear(self):
         ll = len(self)
-        self._lines.clear()
+        self.lines.clear()
         self.removed.on_next(ll)
 
     def _check_trim(self):
         if len(self) > self.MAX_LINES:
             self.lines = self.lines[self.REMOVE_BATCH:]
             self.removed.on_next(self.REMOVE_BATCH)
-
-    def __getitem__(self, n):
-        return self._lines[n]
-
-    def __iter__(self):
-        return iter(self._lines)
-
-    def __len__(self):
-        return len(self._lines)
 
     def complete(self):
         self.added.on_completed()

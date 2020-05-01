@@ -26,12 +26,13 @@ class ChatLine:
         self.is_clannie = False
         self.is_me = False
 
-        self.mentions_me = False    # TODO
+        self.mentions_me = False
 
-        self.is_mod = chatter.is_mod()
+        # TODO - fill attributes
+        # self.is_mod = chatter.is_mod()
 
         if chatter.player is not None:
             self._fill_player_info(chatter.player)
 
-        def _fill_player_info(self, player):
-            pass    # TODO
+    def _fill_player_info(self, player):
+        pass    # TODO

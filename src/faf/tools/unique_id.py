@@ -2,7 +2,7 @@ import sys
 import subprocess
 
 
-def unique_id(user, session):
+def unique_id(session):
     # TODO - do we need the WMI service check on Windows?
     # TODO - path
     if sys.platform == 'win32':

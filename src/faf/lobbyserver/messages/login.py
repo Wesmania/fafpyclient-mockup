@@ -1,5 +1,6 @@
 import hashlib
 from dataclasses import dataclass
+from rx import operators as ops
 
 
 def mangle_password(password):
@@ -20,19 +21,20 @@ class AuthError(ConnectionError):
 
 class LoginMessage:
     def __init__(self, lobby_protocol):
+        self._lobby_protocol = lobby_protocol
         self._messages = lobby_protocol.register(
             "welcome", "session", "authentication_failed")
 
-    async def perform_login(self, login, password, unique_id):
-        self._send_ask_session()
-        msg_type, msg = await self._messages
+    async def perform_login(self, login, password, generate_uid):
+        msg_type, msg = await self._send_ask_session()
         if msg_type != "session":
             raise ConnectionError(f"Expected 'session', got {msg_type}")
 
-        session = msg['session']
+        session = str(msg['session'])
+        unique_id = generate_uid(session)
         password = mangle_password(password)
-        self._send_hello(session, login, password, unique_id)
-        msg_type, msg = await self._messages
+        msg_type, msg = await self._send_hello(login, password, unique_id,
+                                               session)
         if msg_type not in ['welcome', 'authentication_failed']:
             raise ConnectionError(f"Expected auth message, got {msg_type}")
 
@@ -41,3 +43,26 @@ class LoginMessage:
             return LoginResult(login, session, unique_id, player_info)
         else:
             raise AuthError(msg['text'])
+
+    def _next_msg(self):
+        return self._messages.pipe(ops.first())
+
+    def _send_ask_session(self):
+        msg = {
+            "command": "ask_session",
+            "version": "0.18.9",
+            "user_agent": "downlords-faf-client"
+        }
+        self._lobby_protocol.send(msg)
+        return self._next_msg()
+
+    def _send_hello(self, login, password, unique_id, session):
+        msg = {
+            "command": "hello",
+            "login": login,
+            "password": password,
+            "unique_id": unique_id,
+            "session": session
+        }
+        self._lobby_protocol.send(msg)
+        return self._next_msg()

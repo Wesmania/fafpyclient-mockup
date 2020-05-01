@@ -1,8 +1,10 @@
 from rx.subject import Subject
+from collections.abc import Mapping
 
 
-class ModelSet:
+class ModelSet(Mapping):
     def __init__(self):
+        Mapping.__init__(self)
         self._items = {}
         self.added = Subject()
         self.removed = Subject()
@@ -16,12 +18,6 @@ class ModelSet:
 
     def __iter__(self):
         return iter(self._items)
-
-    def __contains__(self, key):
-        return key in self._items
-
-    def get(self, key, default=None):
-        return self._items.get(key, default)
 
     def add(self, item):
         self._items[item.id_key] = item

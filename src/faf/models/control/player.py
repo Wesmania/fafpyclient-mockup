@@ -5,7 +5,7 @@ class ModelPlayerUpdater:
     def __init__(self, models, player_msg, chat_updater):
         self._models = models
         self._chat_updater = chat_updater
-        player_msg.new.subscribe(self._on_player_msg)
+        player_msg.new.subscribe(self.add_player_from_msg)
 
     @property
     def _players(self):
@@ -19,14 +19,15 @@ class ModelPlayerUpdater:
     def _current_player_game(self):
         return self._models.current_player_game
 
-    def _on_player_msg(self, msg):
+    def add_player_from_msg(self, msg):
         self.add_or_update_player(msg["login"], msg)
+        return self._players[msg["login"]]
 
     def add_or_update_player(self, pid, attrs):
         if pid not in self._games:
-            return self._add_player(pid, attrs)
+            self._add_player(pid, attrs)
         else:
-            return self._update_player(pid, attrs)
+            self._update_player(pid, attrs)
 
     def _add_player(self, pid, attrs):
         player = Player(self._current_player_game, pid)

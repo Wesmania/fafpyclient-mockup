@@ -18,20 +18,23 @@ class NewsModel(QtListModel):
 
 
 class News(QObject):
-    def __init__(self, api, model, qml_context):
+    def __init__(self, api, model, login_session, qml_context):
         QObject.__init__(self)
         self._api = api
+        self._login_session = login_session
         self.model = model
 
+        self._login_session.login.logged_in.connect(self.fetch)
         self._api.done.connect(self._set_news)
+
         qml_context.setContextProperty("faf__news", self)
         qml_context.setContextProperty("faf__news__model", self.model)
 
     @classmethod
-    def build(cls, qml_context):
+    def build(cls, login_session, qml_context):
         api = WPAPI()
         model = NewsModel()
-        return cls(api, model, qml_context)
+        return cls(api, model, login_session, qml_context)
 
     @Slot()
     def fetch(self):
