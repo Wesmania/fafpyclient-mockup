@@ -13,7 +13,7 @@ class LobbyGamesModel(QSortFilterProxyModel):
 
     def filterAcceptsRow(self, row, parent):
         index = self.sourceModel().index(row, 0, parent)
-        game = self.sourceModel().item_at(index)
+        game = self.sourceModel().from_index(index)
         if game is None:
             return False
         return game.state is GameState.OPEN

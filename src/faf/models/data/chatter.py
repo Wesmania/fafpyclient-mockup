@@ -4,11 +4,11 @@ from faf.models.base import ModelItem
 
 class IRCMode(IntFlag):
     # These are specific to UnrealIRCd.
-    OWNER = 1
-    ADMIN = 2
+    OWNER = 16
+    ADMIN = 8
     OP = 4
-    HALFOP = 8
-    VOICED = 16
+    HALFOP = 2
+    VOICED = 1
 
     @classmethod
     def from_nick_pfx(cls, pfx):
@@ -78,3 +78,7 @@ class Chatter(ModelItem):
     @property
     def id_key(self):
         return self.nick
+
+    @property
+    def is_op(self):
+        return self.mode >= IRCMode.OP

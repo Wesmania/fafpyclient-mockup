@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 import '../news_tab'
 import '../game_tab'
+import '../chat_tab'
 
 Item {
     id: element
@@ -94,12 +95,12 @@ Item {
         currentIndex: clientTabBar.currentIndex
 
         News {
-        }
-
-        Item {
 
         }
-        GameTab{
+        ChatTab {
+
+        }
+        GameTab {
 
         }
     }

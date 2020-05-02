@@ -11,8 +11,8 @@ from faf.lobbyserver import LobbyServer
 from faf.session import LoginSession
 from faf.tabs.news import NewsTab
 from faf.tabs.games import GamesTab
+from faf.tabs.chat import ChatTab
 from faf.models import Models
-from faf.tabs.games.gamemodel import LobbyGamesModel
 from faf.irc.irc import Irc
 
 
@@ -41,6 +41,7 @@ if __name__ == "__main__":
     login_session = LoginSession(lobby_server, irc, models, ctx)
     news = NewsTab(login_session, ctx)
     games = GamesTab(models, ctx)
+    chat = ChatTab(models, ctx)
 
     root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     qml_file = os.path.join(root_path, "res/ui/main_window/ToplevelWindow.qml")

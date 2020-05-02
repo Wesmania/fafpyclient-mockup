@@ -2,8 +2,10 @@ from faf.models.data.channel import Channel, ChannelID
 from faf.models.data.chatter import Chatter, IRCMode
 from faf.models.data.chatline import ChatLine, ChatLineType
 from faf.irc.ctcp import ctcp_dequote
+from faf.irc.style import unstyle
 
 
+# TODO - move some bits that have to do with irc format to irc module.
 class ModelChatUpdater:
     def __init__(self, models, irc):
         self._models = models
@@ -183,7 +185,7 @@ class ModelChatUpdater:
         if nick not in channel.chatters:
             return
         chatter = channel.chatters[nick]
-        line = ChatLine(chatter, text, type_)
+        line = ChatLine(chatter, unstyle(text), type_)
         channel.lines.add(line)
 
     def _on_private_msg(self, nick, text, type_):
@@ -193,7 +195,7 @@ class ModelChatUpdater:
         self._add_or_update_from_name(channel, nick)
         self._add_or_update_from_name(channel, self._irc.my_username)
         chatter = channel.chatters[nick]
-        line = ChatLine(chatter, text, type_)
+        line = ChatLine(chatter, unstyle(text), type_)
         channel.lines.add(line)
 
     # Interface for player model updater.

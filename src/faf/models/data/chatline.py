@@ -9,9 +9,9 @@ class ChatLineType(Enum):
 
 
 class ChatLine:
-    def __init__(self, chatter, text, type_, timestamp=None):
-        self.sender = chatter.nick
-        self.text = text
+    def __init__(self, chatter, message, type_, timestamp=None):
+        self.nick = chatter.nick
+        self.message = message
         if timestamp is None:
             timestamp = time.time()
         self.time = timestamp
@@ -33,6 +33,8 @@ class ChatLine:
 
         if chatter.player is not None:
             self._fill_player_info(chatter.player)
+
+        print(f"{self.nick}: {repr(self.message)}")
 
     def _fill_player_info(self, player):
         pass    # TODO

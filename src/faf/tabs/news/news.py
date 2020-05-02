@@ -1,14 +1,14 @@
 from PySide2.QtCore import QObject, Slot
 
 from faf.tabs.news.wpapi import WPAPI
-from faf.qt import QtListModel
+from faf.qt import QtPlainListModel
 
 
-class NewsModel(QtListModel):
+class NewsModel(QtPlainListModel):
     @Slot(int, result='QVariant')
     def news_contents(self, idx):
         try:
-            item = self._items[idx]
+            item = self._itemlist[idx]
         except IndexError:
             return {'title': '', 'body': ''}
         return item
