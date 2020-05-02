@@ -1,5 +1,6 @@
 from rx import operators as ops
 from rx.scheduler.mainloop import QtScheduler
+from rx.scheduler import ImmediateScheduler
 from PySide2 import QtCore
 from faf.models.data.game import GameVisibility, GameState
 
@@ -13,6 +14,7 @@ class GameMessage:
             ops.flat_map(self._split_game_info),
             ops.observe_on(self._aio_scheduler),
             ops.flat_map(self._process_game),
+            ops.observe_on(ImmediateScheduler()),
             ops.filter(lambda x: x is not None),
         )
 

@@ -1,5 +1,6 @@
 from rx import operators as ops
 from rx.scheduler.mainloop import QtScheduler
+from rx.scheduler import ImmediateScheduler
 from PySide2 import QtCore
 
 
@@ -18,6 +19,7 @@ class PlayerMessage:
             ops.flat_map(self._split_player_info),
             ops.observe_on(self._aio_scheduler),
             ops.flat_map(self._handle_player_info),
+            ops.observe_on(ImmediateScheduler()),
         )
 
     def _split_player_info(self, msgs):
