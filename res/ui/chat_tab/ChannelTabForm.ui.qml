@@ -9,7 +9,7 @@ Item {
     property alias channelLinesModel : channelLinesView.model
     property alias channelChattersModel : channelChattersView.model
 
-    TextArea {
+    Text {
         id: chatTopic
         width: parent.width
         anchors.top: parent.top

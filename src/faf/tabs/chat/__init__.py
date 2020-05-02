@@ -16,4 +16,8 @@ class ChatTab(QObject):
 
     @Slot(str, bool)
     def leave_channel(self, channel_name, is_public):
-        print(repr(f"TODO: leave {channel_name}"))
+        print(f"TODO: leave {channel_name}")
+
+    @Slot(str, bool, str)
+    def send_message(self, channel_name, is_public, message):
+        print(f"TODO: send '{message}' to {channel_name}")

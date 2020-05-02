@@ -4,7 +4,9 @@ import QtQuick.Layouts 1.3
 
 Item {
     property var chatModel
-    property alias channelTabBarButtons: channelTabBarButtons
+    property alias chatTabBar: chatTabBar
+    property alias chatTabBarRepeater: chatTabBarRepeater
+    property alias chatInputBox: chatInputBox
     id: chatFrame
 
     TabBar {
@@ -14,7 +16,7 @@ Item {
         anchors.top: parent.top
 
         Repeater {
-            id: channelTabBarButtons
+            id: chatTabBarRepeater
             model: chatModel
             ChannelTabButton {
                 width: implicitWidth
