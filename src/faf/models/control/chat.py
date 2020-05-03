@@ -13,15 +13,15 @@ class ModelChatUpdater:
         self._irc = irc
         self._chat_filter = lambda _: False
 
-        self._irc.disconnected.connect(self.on_disconnect)
-        self._irc.names.connect(self.on_names)
-        self._irc.join.connect(self.on_join)
-        self._irc.part.connect(self.on_part)
-        self._irc.quit.connect(self.on_quit)
-        self._irc.topic.connect(self.on_topic)
-        self._irc.message.connect(self.on_message)
-        self._irc.usermode.connect(self.on_usermode)
-        self._irc.rename.connect(self.on_rename)
+        self._irc.at_disconnected.connect(self.on_disconnect)
+        self._irc.at_names.connect(self.on_names)
+        self._irc.at_join.connect(self.on_join)
+        self._irc.at_part.connect(self.on_part)
+        self._irc.at_quit.connect(self.on_quit)
+        self._irc.at_topic.connect(self.on_topic)
+        self._irc.at_message.connect(self.on_message)
+        self._irc.at_usermode.connect(self.on_usermode)
+        self._irc.at_rename.connect(self.on_rename)
 
     @property
     def _players(self):
@@ -139,7 +139,9 @@ class ModelChatUpdater:
             channel = self._chat[public_channel]
             self._on_public_msg(nick, channel, text, type_)
         elif target == self._irc.my_username.nick:
-            self._on_private_msg(nick, text, type_)
+            self._on_other_private_msg(nick, text, type_)
+        elif nick.nick == self._irc.my_username.nick:
+            self._on_my_private_msg(target, text, type_)
 
     def _on_public_msg(self, nick: IrcNickWithMode, channel, text,
                        type_: MessageType):
@@ -149,12 +151,17 @@ class ModelChatUpdater:
         line = ChatLine(chatter, text, type_)
         channel.lines.add(line)
 
-    def _on_private_msg(self, nick: IrcNickWithMode, text, type_: MessageType):
-        cid = ChannelID.private(nick.nick)
-        self._add_channel(cid)
-        channel = self._chat[cid]
-        self._add_or_update_from_nick(channel, nick)
-        self._add_or_update_from_nick(channel, self._irc.my_username)
+    def _on_my_private_msg(self, target: str, text,
+                           type_: MessageType):
+        nick = IrcNickWithMode.from_nick(target)
+        channel = self._join_private_channel(nick)
+        chatter = channel.chatters[self._irc.my_username.nick]
+        line = ChatLine(chatter, text, type_)
+        channel.lines.add(line)
+
+    def _on_other_private_msg(self, nick: IrcNickWithMode, text,
+                              type_: MessageType):
+        channel = self._join_private_channel(nick)
         chatter = channel.chatters[nick.nick]
         line = ChatLine(chatter, text, type_)
         channel.lines.add(line)
@@ -174,6 +181,22 @@ class ModelChatUpdater:
                 ch = channel.chatters[name]
                 ch.player = None
 
-    # Interface for other stuff.
+    # Interface for IRC.
+    def join_private_channel(self, chatter):
+        nwm = IrcNickWithMode(chatter.nick, chatter.mode)
+        self._join_private_channel(nwm)
+
+    def _join_private_channel(self, nick: IrcNickWithMode):
+        cid = ChannelID.private(nick.nick)
+        self._add_channel(cid)
+        channel = self._chat[cid]
+        self._add_or_update_from_nick(channel, nick)
+        self._add_or_update_from_nick(channel, self._irc.my_username)
+        return channel
+
+    def leave_private_channel(self, channel_name):
+        channel_id = ChannelID.private(channel_name)
+        self._remove_channel(channel_id)
+
     def set_chat_filter(self, chat_filter):
         self._chat_filter = chat_filter

@@ -41,7 +41,7 @@ if __name__ == "__main__":
     login_session = LoginSession(lobby_server, irc, models, ctx)
     news = NewsTab(login_session, ctx)
     games = GamesTab(models, ctx)
-    chat = ChatTab(models, ctx)
+    chat = ChatTab(irc, models, ctx)
 
     root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     qml_file = os.path.join(root_path, "res/ui/main_window/ToplevelWindow.qml")

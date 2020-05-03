@@ -63,10 +63,6 @@ class IrcNickWithMode:
     mode: IrcMode
 
     @classmethod
-    def from_nick_pfx(cls, pfx):
-        return PREFICES.get(pfx, cls(0))
-
-    @classmethod
     def from_nick(cls, nick):
         if not nick or nick[0] not in PREFICES:
             return cls(nick, IrcMode(0))
@@ -75,17 +71,17 @@ class IrcNickWithMode:
 
 
 class IrcClient(QObject):
-    connected = Signal()
-    disconnected = Signal()
-    nickserv_identified = Signal()
-    names = Signal(str, list)
-    join = Signal(str, IrcNickWithMode)
-    part = Signal(str, IrcNickWithMode, str)
-    quit = Signal(IrcNickWithMode, str)
-    topic = Signal(str, str)
-    usermode = Signal(IrcNickWithMode, str)
-    rename = Signal(IrcNickWithMode, IrcNickWithMode)
-    message = Signal(IrcNickWithMode, str, str, MessageType)
+    at_connected = Signal()
+    at_disconnected = Signal()
+    at_nickserv_identified = Signal()
+    at_names = Signal(str, list)
+    at_join = Signal(str, IrcNickWithMode)
+    at_part = Signal(str, IrcNickWithMode, str)
+    at_quit = Signal(IrcNickWithMode, str)
+    at_topic = Signal(str, str)
+    at_usermode = Signal(IrcNickWithMode, str)
+    at_rename = Signal(IrcNickWithMode, IrcNickWithMode)
+    at_message = Signal(IrcNickWithMode, str, str, MessageType)
 
     def __init__(self, host, port):
         QObject.__init__(self)
@@ -110,12 +106,32 @@ class IrcClient(QObject):
     def _on(self, msg, cb):
         return self.c.on(msg)(cb)
 
+    def send_privmsg(self, target, message):
+        self.c.send('PRIVMSG', target=target, message=message)
+
+    def send_notice(self, target, message):
+        self.c.send('NOTICE', target=target, message=message)
+
+    def send_action(self, target, message):
+        message = f'\x01ACTION {message}\x01'
+        self.c.send('PRIVMSG', target=target, message=message)
+
+    def join(self, channel):
+        self.c.send('JOIN', channel=channel)
+
+    def part(self, channel):
+        self.c.send('PART', channel=channel)
+
+    def topic(self, channel, message):
+        self.c.send('TOPIC', channel=channel, message=message)
+
     def connect_(self, username, password):
         self.my_username = IrcNickWithMode(username, IrcMode(0))
         self.nickserv_password = md5(password)
         self.c.loop.create_task(self.c.connect())
 
     def disconnect_(self):
+        self.c.send('QUIT', message='ctrl-k')
         self.c.loop.create_task(self.c.disconnect())
 
     async def _on_connect(self, **kwargs):
@@ -124,7 +140,7 @@ class IrcClient(QObject):
                     realname=self.my_username.nick)
         await self._wait_on_motd()
         self._nickserv_identify()
-        self.connected.emit()
+        self.at_connected.emit()
 
     async def _wait_on_motd(self):
         done, pending = await asyncio.wait(
@@ -137,48 +153,48 @@ class IrcClient(QObject):
 
     async def _on_disconnect(self, **kwargs):
         self._nickserv_identified = False
-        self.diconnected.emit()
+        self.at_diconnected.emit()
 
     async def _on_ping(self, message, **kwargs):
         self.c.send('PONG', message=message)
 
     def _on_names(self, channel_name, users, **kwargs):
         users = [IrcNickWithMode.from_nick(u) for u in users]
-        self.names.emit(channel_name, users)
+        self.at_names.emit(channel_name, users)
 
     def _on_join(self, channel_name, nick=None, **kwargs):
         if nick is None:
             return
         nick = IrcNickWithMode.from_nick(nick)
-        self.join.emit(channel_name, nick)
+        self.at_join.emit(channel_name, nick)
 
     def _on_part(self, channel_name, message, nick=None, **kwargs):
         if nick is None:
             return
         nick = IrcNickWithMode.from_nick(nick)
-        self.part.emit(channel_name, nick, message)
+        self.at_part.emit(channel_name, nick, message)
 
     def _on_quit(self, message, nick=None, **kwargs):
         if nick is None:
             return
         nick = IrcNickWithMode.from_nick(nick)
-        self.part.emit(nick, message)
+        self.at_quit.emit(nick, message)
 
     def _on_topic(self, channel, message, **kwargs):
-        self.topic.emit(channel, message)
+        self.at_topic.emit(channel, message)
 
     def _on_usermode(self, modes, nick=None, **kwargs):
         if nick is None:
             return
         nick = IrcNickWithMode.from_nick(nick)
-        self.usermode.emit(nick, modes)
+        self.at_usermode.emit(nick, modes)
 
     def _on_rename(self, new_nick, nick=None, **kwargs):
         if nick is None:
             return
         nick = IrcNickWithMode.from_nick(nick)
         new_nick = IrcNickWithMode.from_nick(nick)
-        self.rename.emit(nick, new_nick)
+        self.at_rename.emit(nick, new_nick)
 
     def _on_message(self, target, message, default_type, nick=None):
         if nick is None:
@@ -210,7 +226,7 @@ class IrcClient(QObject):
 
     def _on_msg(self, nick, target, message, type_):
         message = unstyle(message)
-        self.message.emit(nick, target, message, type_)
+        self.at_message.emit(nick, target, message, type_)
 
     # TODO - below bit might be incomplete. Things might break if we changed
     # our username or if there's a user with the same username on IRC because
@@ -221,7 +237,7 @@ class IrcClient(QObject):
         if any(s in message for s in ident_strings):
             if not self._nickserv_identified:
                 self._nickserv_identified = True
-                self.nickserv_identified.emit()
+                self.at_nickserv_identified.emit()
         elif "isn't registered" in message:
             self._nickserv_register()
         elif f"Nickname {self.my_username.nick} registered." in message:

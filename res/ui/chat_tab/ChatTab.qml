@@ -19,11 +19,15 @@ ChatTabForm {
         target: chatInputBox
         onAccepted: {
             var currentTab = chatTabBar.currentItem;
-            if (currentTab === undefined) {
-                return;
-            }
-            var channelName = currentTab.channelName;
-            var isPublic = currentTab.isPublic;
+	    var channelName;
+	    var isPublic;
+            if (currentTab === null) {
+                channelName = null;
+                isPublic = null;
+            } else {
+                channelName = currentTab.channelName;
+                isPublic = currentTab.isPublic;
+	    }
             chat.send_message(channelName, isPublic, chatInputBox.text);
             chatInputBox.text = ""
         }
