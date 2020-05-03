@@ -1,11 +1,10 @@
 from rx import operators as ops
 
 from faf.qt.model import QtDictListModel
-from faf.models.base import ModelItem, ModelSet
 
 
 class InternalModelQtProxy(QtDictListModel):
-    def __init__(self, item_set: ModelSet):
+    def __init__(self, item_set):
         QtDictListModel.__init__(self)
         self._item_set = item_set
 
@@ -13,10 +12,10 @@ class InternalModelQtProxy(QtDictListModel):
         item_set.removed.subscribe(self._remove_item)
         item_set.cleared.subscribe(self._clear_items)
 
-    def _add_item(self, item: ModelItem):
+    def _add_item(self, item):
         self._add(item.id_key, item)
 
-    def _remove_item(self, item: ModelItem):
+    def _remove_item(self, item):
         self._remove(item.id_key)
 
     def _clear_items(self, _):
@@ -24,7 +23,7 @@ class InternalModelQtProxy(QtDictListModel):
 
     def _update_stream(self, stream_selector):
 
-        def select(item: ModelItem):
+        def select(item):
             return stream_selector(item).pipe(
                 ops.map(lambda _: item)
             )
