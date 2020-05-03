@@ -29,7 +29,7 @@ ChatTabForm {
                 isPublic = currentTab.isPublic;
 	    }
             chat.send_message(channelName, isPublic, chatInputBox.text);
-            chatInputBox.text = ""
+            chatInputBox.clear()
         }
     }
 }

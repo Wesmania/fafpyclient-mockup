@@ -42,6 +42,10 @@ class ModelChatUpdater:
             existing = channel.chatters[nick.nick]
             existing.mode = nick.mode
 
+    def _add_or_update_from_name(self, channel, name):
+        nick = IrcNickWithMode.from_nick(name)
+        self._add_or_update_from_nick(channel, nick)
+
     def _remove_from_nick(self, channel, nick: IrcNickWithMode):
         if nick.nick not in channel.chatters:
             return
@@ -104,7 +108,7 @@ class ModelChatUpdater:
         channel = self._chat[channel_id]
         self._remove_from_nick(channel, nick)
 
-        if nick == self._irc.my_username:
+        if nick.nick == self._irc.my_username:
             self._remove_channel(channel_id)
 
     def on_quit(self, nick: IrcNickWithMode, message):
@@ -138,9 +142,9 @@ class ModelChatUpdater:
         if public_channel in self._chat:
             channel = self._chat[public_channel]
             self._on_public_msg(nick, channel, text, type_)
-        elif target == self._irc.my_username.nick:
+        elif target == self._irc.my_username:
             self._on_other_private_msg(nick, text, type_)
-        elif nick.nick == self._irc.my_username.nick:
+        elif nick.nick == self._irc.my_username:
             self._on_my_private_msg(target, text, type_)
 
     def _on_public_msg(self, nick: IrcNickWithMode, channel, text,
@@ -155,7 +159,7 @@ class ModelChatUpdater:
                            type_: MessageType):
         nick = IrcNickWithMode.from_nick(target)
         channel = self._join_private_channel(nick)
-        chatter = channel.chatters[self._irc.my_username.nick]
+        chatter = channel.chatters[self._irc.my_username]
         line = ChatLine(chatter, text, type_)
         channel.lines.add(line)
 
@@ -191,7 +195,7 @@ class ModelChatUpdater:
         self._add_channel(cid)
         channel = self._chat[cid]
         self._add_or_update_from_nick(channel, nick)
-        self._add_or_update_from_nick(channel, self._irc.my_username)
+        self._add_or_update_from_name(channel, self._irc.my_username)
         return channel
 
     def leave_private_channel(self, channel_name):

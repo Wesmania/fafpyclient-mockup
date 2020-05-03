@@ -11,7 +11,6 @@ from faf.tools.md5 import md5
 
 class MessageType(Enum):
     MESSAGE = auto()
-    NOTICE = auto()
     ACTION = auto()
 
 
@@ -66,7 +65,7 @@ class IrcNickWithMode:
     def from_nick(cls, nick):
         if not nick or nick[0] not in PREFICES:
             return cls(nick, IrcMode(0))
-        mode = PREFICES(nick[0])
+        mode = PREFICES[nick[0]]
         return cls(nick[1:], mode)
 
 
@@ -99,22 +98,23 @@ class IrcClient(QObject):
         self._on('PART', self._on_part)
         self._on('RPL_TOPIC', self._on_topic)
         self._on('PRIVMSG', self._on_privmsg)
-        self._on('NOTICE', self._on_notice)
         self._on('USERMODE', self._on_usermode)
         self._on('NICK', self._on_rename)
 
     def _on(self, msg, cb):
         return self.c.on(msg)(cb)
 
+    # For convenience, we echo all our messages back to ourselves.
     def send_privmsg(self, target, message):
         self.c.send('PRIVMSG', target=target, message=message)
-
-    def send_notice(self, target, message):
-        self.c.send('NOTICE', target=target, message=message)
+        self.c.trigger('PRIVMSG', nick=self.my_username, target=target,
+                       message=message)
 
     def send_action(self, target, message):
         message = f'\x01ACTION {message}\x01'
         self.c.send('PRIVMSG', target=target, message=message)
+        self.c.trigger('PRIVMSG', nick=self.my_username, target=target,
+                       message=message)
 
     def join(self, channel):
         self.c.send('JOIN', channel=channel)
@@ -126,7 +126,7 @@ class IrcClient(QObject):
         self.c.send('TOPIC', channel=channel, message=message)
 
     def connect_(self, username, password):
-        self.my_username = IrcNickWithMode(username, IrcMode(0))
+        self.my_username = username
         self.nickserv_password = md5(password)
         self.c.loop.create_task(self.c.connect())
 
@@ -135,9 +135,9 @@ class IrcClient(QObject):
         self.c.loop.create_task(self.c.disconnect())
 
     async def _on_connect(self, **kwargs):
-        self.c.send('NICK', nick=self.my_username.nick)
-        self.c.send('USER', user=self.my_username.nick,
-                    realname=self.my_username.nick)
+        self.c.send('NICK', nick=self.my_username)
+        self.c.send('USER', user=self.my_username,
+                    realname=self.my_username)
         await self._wait_on_motd()
         self._nickserv_identify()
         self.at_connected.emit()
@@ -158,21 +158,21 @@ class IrcClient(QObject):
     async def _on_ping(self, message, **kwargs):
         self.c.send('PONG', message=message)
 
-    def _on_names(self, channel_name, users, **kwargs):
+    def _on_names(self, channel, users, **kwargs):
         users = [IrcNickWithMode.from_nick(u) for u in users]
-        self.at_names.emit(channel_name, users)
+        self.at_names.emit(channel, users)
 
-    def _on_join(self, channel_name, nick=None, **kwargs):
+    def _on_join(self, channel, nick=None, **kwargs):
         if nick is None:
             return
         nick = IrcNickWithMode.from_nick(nick)
-        self.at_join.emit(channel_name, nick)
+        self.at_join.emit(channel, nick)
 
-    def _on_part(self, channel_name, message, nick=None, **kwargs):
+    def _on_part(self, channel, message, nick=None, **kwargs):
         if nick is None:
             return
         nick = IrcNickWithMode.from_nick(nick)
-        self.at_part.emit(channel_name, nick, message)
+        self.at_part.emit(channel, nick, message)
 
     def _on_quit(self, message, nick=None, **kwargs):
         if nick is None:
@@ -213,9 +213,6 @@ class IrcClient(QObject):
     def _on_privmsg(self, target, message, nick=None, **kwargs):
         self._on_message(target, message, MessageType.MESSAGE, nick)
 
-    def _on_notice(self, target, message, nick=None, **kwargs):
-        self._on_message(target, message, MessageType.NOTICE, nick)
-
     def _on_action(self, nick, target, message):
         if message[0] != 'ACTION':
             return
@@ -240,20 +237,20 @@ class IrcClient(QObject):
                 self.at_nickserv_identified.emit()
         elif "isn't registered" in message:
             self._nickserv_register()
-        elif f"Nickname {self.my_username.nick} registered." in message:
+        elif f"Nickname {self.my_username} registered." in message:
             self._nickserv_identify()
 
     def _nickserv_identify(self):
         if self._nickserv_identified:
             return
-        self._send_to_nickserv(f'identify {self.my_username.nick} '
+        self._send_to_nickserv(f'identify {self.my_username} '
                                f'{self.nickserv_password}')
 
     def _nickserv_register(self):
         if self._nickserv_registered:
             return
         self._send_to_nickserv(f'register {self.nickserv_password} '
-                               f'{self.my_username.nick}@users.faforever.com')
+                               f'{self.my_username}@users.faforever.com')
         self._nickserv_registered = True
 
     def _send_to_nickserv(self, msg):

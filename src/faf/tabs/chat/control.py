@@ -10,8 +10,6 @@ class IrcControl:
     def send(self, target, message, type_: MessageType):
         if type_ is MessageType.MESSAGE:
             self._irc_client.send_privmsg(target, message)
-        elif type_ is MessageType.NOTICE:
-            self._irc_client.send_notice(target, message)
         elif type_ is MessageType.ACTION:
             self._irc_client.send_action(target, message)
 
@@ -35,7 +33,7 @@ class IrcLineParser:
     def __init__(self, control):
         self._control = control
 
-    def handle_line(self, line, target):
+    def handle_line(self, target, line):
         # Filter wacky whitespace and multiline messages.
         line = line.split("\n")[0]
         line = re.sub("\\s", " ", line).strip()

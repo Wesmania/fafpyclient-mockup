@@ -12,9 +12,7 @@ Item {
     TabBar {
         id: chatTabBar
         width: parent.width
-        height: 30
         anchors.top: parent.top
-
         Repeater {
             id: chatTabBarRepeater
             model: chatModel
