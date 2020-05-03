@@ -4,7 +4,7 @@ import QtQuick.Controls 2.13
 ChannelTabButtonForm {
     property string channelName
     property bool isPublic
-    signal quit(string channelName, string isPublic)
+    signal quit(string channelName, bool isPublic)
 
     text: channelName
 
