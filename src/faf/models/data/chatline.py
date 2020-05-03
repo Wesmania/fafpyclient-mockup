@@ -1,11 +1,4 @@
-from enum import Enum
 import time
-
-
-class ChatLineType(Enum):
-    MESSAGE = 0
-    NOTICE = 1
-    ACTION = 2
 
 
 class ChatLine:
@@ -33,8 +26,6 @@ class ChatLine:
 
         if chatter.player is not None:
             self._fill_player_info(chatter.player)
-
-        print(f"{self.nick}: {repr(self.message)}")
 
     def _fill_player_info(self, player):
         pass    # TODO
