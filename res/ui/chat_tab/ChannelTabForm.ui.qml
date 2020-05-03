@@ -29,6 +29,7 @@ Item {
         }
         ListView {
             id: channelChattersView
+            visible: isPublic
             SplitView.preferredWidth: 100
             SplitView.maximumWidth: 300
             delegate: Text {
