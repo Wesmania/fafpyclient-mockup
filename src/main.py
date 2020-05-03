@@ -13,7 +13,7 @@ from faf.tabs.news import NewsTab
 from faf.tabs.games import GamesTab
 from faf.tabs.chat import ChatTab
 from faf.models import Models
-from faf.irc.irc import Irc
+from faf.irc import Irc
 
 
 def get_app():

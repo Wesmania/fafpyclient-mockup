@@ -10,6 +10,7 @@ def mangle_password(password):
 @dataclass
 class LoginResult:
     login: str
+    password: str
     session: str
     unique_id: str
     player_info: dict
@@ -40,7 +41,8 @@ class LoginMessage:
 
         if msg_type == 'welcome':
             player_info, login = msg["me"], msg["id"]
-            return LoginResult(login, session, unique_id, player_info)
+            return LoginResult(login, password, session, unique_id,
+                               player_info)
         else:
             raise AuthError(msg['text'])
 

@@ -6,6 +6,7 @@ import asyncio
 
 from faf.irc.ctcp import ctcp_dequote
 from faf.irc.style import unstyle
+from faf.tools.md5 import md5
 
 
 class MessageType(Enum):
@@ -73,9 +74,10 @@ class IrcNickWithMode:
         return cls(nick[1:], mode)
 
 
-class Irc(QObject):
+class IrcClient(QObject):
     connected = Signal()
     disconnected = Signal()
+    nickserv_identified = Signal()
     names = Signal(str, list)
     join = Signal(str, IrcNickWithMode)
     part = Signal(str, IrcNickWithMode, str)
@@ -88,6 +90,9 @@ class Irc(QObject):
     def __init__(self, host, port):
         QObject.__init__(self)
         self.my_username = None
+        self.nickserv_password = None
+        self._nickserv_identified = False
+        self._nickserv_registered = False
         self.c = Client(host, port, ssl=False)
         self._on('CLIENT_CONNECT', self._on_connect)
         self._on('CLIENT_DISCONNECT', self._on_disconnect)
@@ -105,8 +110,9 @@ class Irc(QObject):
     def _on(self, msg, cb):
         return self.c.on(msg)(cb)
 
-    def connect_(self, username):
+    def connect_(self, username, password):
         self.my_username = IrcNickWithMode(username, IrcMode(0))
+        self.nickserv_password = md5(password)
         self.c.loop.create_task(self.c.connect())
 
     def disconnect_(self):
@@ -117,6 +123,7 @@ class Irc(QObject):
         self.c.send('USER', user=self.my_username.nick,
                     realname=self.my_username.nick)
         await self._wait_on_motd()
+        self._nickserv_identify()
         self.connected.emit()
 
     async def _wait_on_motd(self):
@@ -129,6 +136,7 @@ class Irc(QObject):
             future.cancel()
 
     async def _on_disconnect(self, **kwargs):
+        self._nickserv_identified = False
         self.diconnected.emit()
 
     async def _on_ping(self, message, **kwargs):
@@ -173,10 +181,12 @@ class Irc(QObject):
         self.rename.emit(nick, new_nick)
 
     def _on_message(self, target, message, default_type, nick=None):
-        print(f"{target}, {message}, {nick}, {default_type}")
         if nick is None:
             return
         nick = IrcNickWithMode.from_nick(nick)
+        if nick.nick.lower() == 'nickserv':
+            return self._handle_nickserv(message)
+
         messages = ctcp_dequote(message)
         for msg in messages:
             if isinstance(msg, tuple):
@@ -201,3 +211,34 @@ class Irc(QObject):
     def _on_msg(self, nick, target, message, type_):
         message = unstyle(message)
         self.message.emit(nick, target, message, type_)
+
+    # TODO - below bit might be incomplete. Things might break if we changed
+    # our username or if there's a user with the same username on IRC because
+    # of a stale session. Identify and fix.
+    def _handle_nickserv(self, message):
+        ident_strings = ["registered under your account", "Password accepted",
+                         "You are already identified."]
+        if any(s in message for s in ident_strings):
+            if not self._nickserv_identified:
+                self._nickserv_identified = True
+                self.nickserv_identified.emit()
+        elif "isn't registered" in message:
+            self._nickserv_register()
+        elif f"Nickname {self.my_username.nick} registered." in message:
+            self._nickserv_identify()
+
+    def _nickserv_identify(self):
+        if self._nickserv_identified:
+            return
+        self._send_to_nickserv(f'identify {self.my_username.nick} '
+                               f'{self.nickserv_password}')
+
+    def _nickserv_register(self):
+        if self._nickserv_registered:
+            return
+        self._send_to_nickserv(f'register {self.nickserv_password} '
+                               f'{self.my_username.nick}@users.faforever.com')
+        self._nickserv_registered = True
+
+    def _send_to_nickserv(self, msg):
+        self.c.send('PRIVMSG', target="NickServ", message=msg)

@@ -23,7 +23,7 @@ class ModelData:
 
 class ModelControl:
     def __init__(self, data, lobby_server, irc):
-        self.chat_updater = ModelChatUpdater(data, irc)
+        self.chat_updater = ModelChatUpdater(data, irc.client)
         self.game_updater = ModelGameUpdater(data, lobby_server.game_msg)
         self.player_updater = ModelPlayerUpdater(data, lobby_server.player_msg,
                                                  self.chat_updater)

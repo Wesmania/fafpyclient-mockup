@@ -6,13 +6,16 @@ class LoginSessionData:
         self._model_player_updater = model_player_updater
 
         self.player = None
+        self.password = None
 
     def load_from_login_msg(self, msg):
         pinfo = msg.player_info
         self.player = self._model_player_updater.add_player_from_msg(pinfo)
+        self.password = msg.password
 
     def reset(self):
         self.player = None
+        self.password = None
 
 
 class LogoutModelCleaner:
@@ -46,7 +49,8 @@ class LoginSession:
         self.login.logged_out.connect(self._irc_disconnect)
 
     def _irc_connect(self):
-        self._irc.connect_(self.session.player.login)
+        self._irc.client.connect_(self.session.player.login,
+                                  self.session.password)
 
     def _irc_disconnect(self):
-        self._irc.disconnect_()
+        self._irc.client.disconnect_()
