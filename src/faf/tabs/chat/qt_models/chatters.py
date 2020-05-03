@@ -31,9 +31,10 @@ class ChattersQtFilterModel(QSortFilterProxyModel):
     def __init__(self, chatter_model):
         QSortFilterProxyModel.__init__(self)
         self.setSourceModel(chatter_model)
+        self.sort(0)
 
     def lessThan(self, left_index, right_index):
         source = self.sourceModel()
         left = source.from_index(left_index)
         right = source.from_index(right_index)
-        return left.nick < right.nick
+        return left.nick.lower() < right.nick.lower()
