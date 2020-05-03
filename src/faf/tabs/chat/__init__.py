@@ -25,3 +25,7 @@ class ChatTab(QObject):
     @Slot(str, bool, str)
     def send_message(self, channel_name, is_public, message):
         self.irc_parser.handle_line(channel_name, message)
+
+    @Slot(str, str)
+    def join_private_channel(self, nick, from_channel):
+        self.irc_control.join_priv(nick, from_channel)

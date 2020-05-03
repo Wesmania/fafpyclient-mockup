@@ -36,11 +36,10 @@ Item {
             id: chatTabChannelTabs
             model: chatModel
             ChannelTab {
-                channelName: channel_name
                 isPublic: is_public
                 channelTopic: channel_topic
-                channelLinesModel: lines_model
-                channelChattersModel: chatters_model
+                linesModel: lines_model
+                chattersModel: chatters_model
             }
         }
     }

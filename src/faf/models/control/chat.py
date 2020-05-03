@@ -186,7 +186,14 @@ class ModelChatUpdater:
                 ch.player = None
 
     # Interface for IRC.
-    def join_private_channel(self, chatter):
+    def join_private_channel(self, nick: str, from_channel):
+        cid = ChannelID.public(from_channel)
+        if cid not in self._chat:
+            return
+        channel = self._chat[cid]
+        if nick not in channel.chatters:
+            return
+        chatter = channel.chatters[nick]
         nwm = IrcNickWithMode(chatter.nick, chatter.mode)
         self._join_private_channel(nwm)
 

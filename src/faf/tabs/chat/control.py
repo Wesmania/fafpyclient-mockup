@@ -16,8 +16,8 @@ class IrcControl:
     def join(self, target):
         self._irc_client.join(target)
 
-    def join_priv(self, chatter):
-        self._chat_model_ctl.join_private_channel(chatter)
+    def join_priv(self, nick, from_channel):
+        self._chat_model_ctl.join_private_channel(nick, from_channel)
 
     def part(self, target, is_public):
         if is_public:
