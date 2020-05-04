@@ -18,7 +18,8 @@ SplitView {
 '
 
         property alias newsModel: newsList.model
-        property alias newsListMouseArea: newsListMouseArea
+
+	newsModel: faf__tabs__news__model
 
         orientation: Qt.Horizontal
         ListView {

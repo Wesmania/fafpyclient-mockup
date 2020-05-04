@@ -1,9 +1,8 @@
 import QtQuick 2.4
 
 GridView {
-    property alias gameModel: gameListView.model
-
-    gameModel: faf__tabs__games__model
+    id: gameListView
+    model: faf__tabs__games__model
     cellWidth: 400
     cellHeight: 200
     clip: true

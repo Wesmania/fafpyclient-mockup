@@ -7,7 +7,7 @@ import '../game_tab'
 import '../chat_tab'
 
 Item {
-    property var fafSession: faf__session__logout
+    property var fafSession: faf__session__login
     id: element
     width: 1200
     height: 900

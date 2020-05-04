@@ -52,7 +52,7 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
             text: qsTr("Login")
-            onAccepted: login()
+            onPressed: login()
         }
 
         RowLayout {
