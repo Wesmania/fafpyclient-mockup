@@ -47,7 +47,7 @@ class ChatQtModel(InternalModelQtProxy):
         del self._channel_models[item.id_key]
 
     def _clear_items(self, _):
-        InternalModelQtProxy._remove_item(self, _)
+        InternalModelQtProxy._clear_items(self, _)
         self._channel_models.clear()
 
     def roleNames(self):
