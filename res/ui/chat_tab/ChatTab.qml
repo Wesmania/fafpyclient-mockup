@@ -19,7 +19,9 @@ Item {
         Repeater {
             id: chatTabBarRepeater
             model: chatModel
-            ChannelTabButton {
+	    ChannelTabButton {
+		property string channelName: model.channel_name
+		property string isPublic: model.is_public
                 width: implicitWidth
                 id: chatTabBarButton
             }
