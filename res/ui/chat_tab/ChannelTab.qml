@@ -3,16 +3,11 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.3
 
 Item {
-    property bool isPublic;
-    property string channelTopic;
-    property alias linesModel : linesView.model
-    property alias chattersModel : chattersView.model
-
     Text {
         id: chatTopic
         width: parent.width
         anchors.top: parent.top
-        text: channelTopic
+        text: channel_topic
     }
 
     SplitView {
@@ -21,6 +16,7 @@ Item {
         anchors.bottom: parent.bottom
         ListView {
             id: linesView
+            model: lines_model
             SplitView.fillWidth: true
             delegate: Text {
                 text: nick + ": " + message
@@ -28,7 +24,8 @@ Item {
         }
         ListView {
             id: chattersView
-            visible: isPublic
+            model: chatters_model
+            visible: is_public
             SplitView.preferredWidth: 100
             SplitView.maximumWidth: 300
             delegate: Text {
