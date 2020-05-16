@@ -4,6 +4,10 @@ from faf.qt.model import QtDictListModel
 
 
 class InternalModelQtProxy(QtDictListModel):
+    """
+    A template for a Qt model that gets data from our internal models - games,
+    players, IRC users etc.
+    """
     def __init__(self, item_set):
         QtDictListModel.__init__(self)
         self._item_set = item_set
@@ -35,4 +39,4 @@ class InternalModelQtProxy(QtDictListModel):
 
     def _update_roles_at(self, stream_selector, role):
         self._update_stream(stream_selector).subscribe(
-            lambda g: self._update(g, role.value))
+            lambda i: self._update(i.id_key, role.value))

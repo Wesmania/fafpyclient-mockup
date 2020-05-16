@@ -2,3 +2,4 @@ rx
 pyside2
 asyncqt
 bottom
+sortedcontainers
