@@ -55,10 +55,11 @@ def deepmerge(main, extra):
 class Config(ConfigDict):
     def __init__(self, default_configs, user_config):
         self._user_config_file = user_config
-        configs = [yaml.load(open(f, "r").read()) for f in default_configs]
-        deft_config = reduce(deepmerge, configs)
+        configs = [yaml.safe_load(open(f, "r").read())
+                   for f in default_configs]
+        deft_config = reduce(deepmerge, configs, {})
         try:
-            app_config = yaml.load(open(user_config, "r").read())
+            app_config = yaml.safe_load(open(user_config, "r").read())
         except Exception:   # TODO log
             app_config = {}
 

@@ -1,0 +1,15 @@
+lobby_server:
+        host: lobby.faforever.com
+        port: 8001
+irc_server:
+        host: irc.faforever.com
+        port: 6667
+chat:
+        max_messages_in_channel: 300
+        message_trim_batch_size: 50
+resources:
+        map_previews:
+                cache_dir: '../cache/map_previews/{name}.png'
+                access_url: 'https://content.faforever.com/faf/vault/map_previews/small/{name}.png'
+                default_image: '../res/icons/games/unknown_map.png'
+

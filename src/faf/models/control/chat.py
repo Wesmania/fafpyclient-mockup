@@ -8,9 +8,10 @@ from faf.irc.irc import IrcNickWithMode, IrcMode, MessageType
 
 # TODO - move some bits that have to do with irc format to irc module.
 class ModelChatUpdater:
-    def __init__(self, models, irc):
+    def __init__(self, models, irc, chat_config):
         self._models = models
         self._irc = irc
+        self._chat_config = chat_config
         self._chat_filter = lambda _: False
 
         self._irc.at_disconnected.connect(self.on_disconnect)
@@ -67,7 +68,7 @@ class ModelChatUpdater:
     def _add_channel(self, id_: ChannelID):
         if id_ in self._chat:
             return
-        ch = Channel(id_)
+        ch = Channel(id_, self._chat_config)
         self._chat.add(ch)
         self._chat.added.on_next(ch)
 

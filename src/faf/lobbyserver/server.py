@@ -4,8 +4,8 @@ from faf.lobbyserver.messages import GameMessage, PlayerMessage, LoginMessage
 
 
 class LobbyServer:
-    def __init__(self, host, port):
-        self.connection = LobbyConnection(host, port)
+    def __init__(self, config):
+        self.connection = LobbyConnection(config["host"], config["port"])
         self.protocol = LobbyProtocol(self.connection)
         self.game_msg = GameMessage(self.protocol)
         self.player_msg = PlayerMessage(self.protocol)

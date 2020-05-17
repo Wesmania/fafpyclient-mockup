@@ -32,14 +32,19 @@ class ChannelID:
 
 
 class Lines:
-    # TODO config
-    MAX_LINES = 300
-    REMOVE_BATCH = 50
-
-    def __init__(self):
+    def __init__(self, chat_config):
         self.lines = []
         self.added = Subject()
         self.removed = Subject()
+        self._config = chat_config
+
+    @property
+    def _max_lines(self):
+        return self._config["max_messages_in_channel"]
+
+    @property
+    def _remove_batch(self):
+        return self._config["message_trim_batch_size"]
 
     def __getitem__(self, n):
         return self.lines[n]
@@ -61,9 +66,9 @@ class Lines:
         self.removed.on_next(ll)
 
     def _check_trim(self):
-        if len(self) > self.MAX_LINES:
-            self.lines = self.lines[self.REMOVE_BATCH:]
-            self.removed.on_next(self.REMOVE_BATCH)
+        if len(self) > self._max_lines:
+            self.lines = self.lines[self._remove_batch:]
+            self.removed.on_next(self._remove_batch)
 
     def complete(self):
         self.added.on_completed()
@@ -71,12 +76,12 @@ class Lines:
 
 
 class Channel(ModelItem):
-    def __init__(self, id_):
+    def __init__(self, id_, chat_config):
         ModelItem.__init__(self)
         self.id = id_
 
         self._add_obs("topic", "")
-        self.lines = Lines()
+        self.lines = Lines(chat_config)
         self.chatters = ModelSet()
 
     @property
