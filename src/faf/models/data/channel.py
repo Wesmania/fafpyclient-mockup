@@ -19,6 +19,9 @@ class ChannelID:
     def __hash__(self):
         return hash((self.name, self.type))
 
+    def __lt__(self, other):
+        return (self.type, self.name) < (other.type, other.name)
+
     @classmethod
     def private(cls, name):
         return cls(ChannelType.PRIVATE, name)

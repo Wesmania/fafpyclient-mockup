@@ -20,6 +20,7 @@ class LobbyGamesModel(QSortFilterProxyModel):
     def __init__(self, game_model):
         QSortFilterProxyModel.__init__(self)
         self._game_model = game_model
+
         self._modded_games_visible = False
         self._private_games_visible = False
         self._sort_by = GameSortOptions.AGE

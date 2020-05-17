@@ -10,7 +10,7 @@ Item {
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            source: ROOT_PATH + "/res/icons/games/unknown_map.png"
+            source: map_preview
             height: parent.height
             width: parent.height
             fillMode: Image.PreserveAspectFit

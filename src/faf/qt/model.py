@@ -37,7 +37,6 @@ class QtDictListModel(QAbstractListModel):
     # TODO - removal is O(n).
     def _remove(self, key):
         assert key in self._items
-        item = self._items[key]
         item_index = self._items.index(key)
         self.beginRemoveRows(QModelIndex(), item_index, item_index)
         del self._items[key]
