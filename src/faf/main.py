@@ -1,10 +1,11 @@
 """FAF client.
 
 Usage:
-  main.py -c <files>...
+  main.py --root <root_dir> -c <files>...
 
 Options:
   -c <files>...   Configuration files to use. Last one is treated as user-writable config file.
+  --root <root_dir> Root resource directory.
 """
 
 import sys
@@ -41,14 +42,15 @@ def set_loop(app):
     asyncio.set_event_loop(loop)
 
 
-def get_config():
-    args = docopt(__doc__)
+def get_config(args):
     config_files = args["-c"]
     return Config(config_files[:-1], config_files[-1])
 
 
-if __name__ == "__main__":
-    config = get_config()
+def main():
+    args = docopt(__doc__)
+    config = get_config(args)
+    root_path = args['--root']
 
     app = get_app()
     set_loop(app)
@@ -71,7 +73,6 @@ if __name__ == "__main__":
     games = GamesTab(qt_models, ctx)
     chat = ChatTab(irc, models, ctx)
 
-    root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     qml_file = os.path.join(root_path, "res/ui/main_window/ToplevelWindow.qml")
 
     ctx.setContextProperty("ROOT_PATH", root_path)

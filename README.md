@@ -4,8 +4,8 @@ Running
 =======
 
 * Setup a py3.6+ virtualenv. Install stuff from requirements.txt.
-* Add src/ to PYTHONPATH.
-* cd to src, run 'run.sh'.
+* Run `python3 setup.py`.
+* Run `faf_client --root <repo root path> -c res/config/default.yml -c res/config/user.yml`.
 
 
 Roadmap
