@@ -5,6 +5,8 @@ Running
 
 * Setup a py3.6+ virtualenv. Install stuff from requirements.txt.
 * Run `python3 setup.py`.
+* Make a tools directory, copy faf-uid there.
+* Make a cache/map_previews directory.
 * Run `faf_client --root <repo root path> -c res/config/default.yml -c res/config/user.yml`.
 
 
@@ -20,9 +22,9 @@ Done:
 * Basic game view.
 * Basic news.
 * Downloading map previews.
+* Config, default settings, persistence (probably in yaml). For the most part.
 
 Todo:
-* Config, default settings, persistence (probably in yaml).
 * Packaging for Windows & Linux.
   * Appveyor plus Travis integration.
 * FIXME and TODO fixes.
