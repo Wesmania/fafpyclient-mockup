@@ -6,7 +6,6 @@ from PySide2.QtCore import QObject, Signal, Slot
 
 from faf.lobbyserver.connection import ConnectionState
 from faf.lobbyserver.messages.login import AuthError
-from faf.tools import unique_id
 
 
 class LoginState(Enum):
@@ -16,9 +15,8 @@ class LoginState(Enum):
 
 
 class LoginProcess:
-    def __init__(self, connection, login_message, unique_id):
+    def __init__(self, connection, login_message):
         self._connection = connection
-        self._unique_id = unique_id
         self._login_message = login_message
         self._login_task = None
         self.obs_state = BehaviorSubject(LoginState.LOGGED_OUT)
@@ -35,8 +33,7 @@ class LoginProcess:
 
     @classmethod
     def build(cls, lobby_server):
-        uid = unique_id.unique_id
-        return cls(lobby_server.connection, lobby_server.login_msg, uid)
+        return cls(lobby_server.connection, lobby_server.login_msg)
 
     def login(self, login, password):
         if self.state is not LoginState.LOGGED_OUT:
@@ -56,8 +53,7 @@ class LoginProcess:
                 ops.skip_while(lambda s: s is not ConnectionState.CONNECTED),
                 ops.first()
             )
-            result = await self._login_message.perform_login(login, password,
-                                                             self._unique_id)
+            result = await self._login_message.perform_login(login, password)
             self.obs_auth_results.on_next((True, result))
             self.state = LoginState.LOGGED_IN
         except AuthError as e:

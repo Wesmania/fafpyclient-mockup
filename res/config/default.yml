@@ -9,7 +9,7 @@ chat:
         message_trim_batch_size: 50
 resources:
         map_previews:
-                cache_dir: './cache/map_previews/{name}.png'
+                cache_dir: !Path '{ROOT_PATH}/cache/map_previews/{{name}}.png'
                 access_url: 'https://content.faforever.com/faf/vault/map_previews/small/{name}.png'
-                default_image: './res/icons/games/unknown_map.png'
+                default_image: !Path '{ROOT_PATH}/res/icons/games/unknown_map.png'
 

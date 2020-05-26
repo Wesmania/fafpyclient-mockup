@@ -15,6 +15,7 @@ import aiohttp
 from asyncqt import QSelectorEventLoop
 from docopt import docopt
 
+from PySide2.QtCore import QUrl
 from PySide2.QtGui import QGuiApplication
 from PySide2.QtQml import QQmlApplicationEngine
 from PySide2.QtWebEngine import QtWebEngine
@@ -29,7 +30,8 @@ from faf.models import Models
 from faf.resources import Resources
 from faf.qt_models import QtModels
 from faf.irc import Irc
-from faf.tools import glob
+from faf.environ import Environment
+from faf.tools import Tools
 
 
 def get_app():
@@ -44,16 +46,18 @@ def set_loop(app):
     asyncio.set_event_loop(loop)
 
 
-def get_config(args):
+def get_config(env, args):
     config_files = args["-c"]
-    return Config(config_files[:-1], config_files[-1])
+    return Config(env, config_files[:-1], config_files[-1])
 
 
 def main():
     args = docopt(__doc__)
-    config = get_config(args)
     root_path = args['--root']
-    glob.ROOT_PATH = root_path
+    env = Environment()
+    env.ROOT_PATH = root_path
+    tools = Tools(env)
+    config = get_config(env, args)
 
     app = get_app()
     set_loop(app)
@@ -63,7 +67,7 @@ def main():
     ctx = engine.rootContext()
 
     http_session = aiohttp.ClientSession(loop=loop)
-    lobby_server = LobbyServer(config["lobby_server"])
+    lobby_server = LobbyServer(config["lobby_server"], tools)
     irc = Irc(config["irc_server"])
     resources = Resources(config["resources"], http_session)
 
@@ -78,7 +82,7 @@ def main():
 
     qml_file = os.path.join(root_path, "res/ui/main_window/ToplevelWindow.qml")
 
-    ctx.setContextProperty("ROOT_PATH", f"file:///{root_path}")
+    ctx.setContextProperty("ROOT_PATH", QUrl.fromLocalFile(env.ROOT_PATH))
     engine.load(qml_file)
 
     with loop:

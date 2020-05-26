@@ -21,18 +21,19 @@ class AuthError(ConnectionError):
 
 
 class LoginMessage:
-    def __init__(self, lobby_protocol):
+    def __init__(self, lobby_protocol, tools):
         self._lobby_protocol = lobby_protocol
+        self._tools = tools
         self._messages = lobby_protocol.register(
             "welcome", "session", "authentication_failed")
 
-    async def perform_login(self, login, password, generate_uid):
+    async def perform_login(self, login, password):
         msg_type, msg = await self._send_ask_session()
         if msg_type != "session":
             raise ConnectionError(f"Expected 'session', got {msg_type}")
 
         session = str(msg['session'])
-        unique_id = generate_uid(session)
+        unique_id = self._tools.unique_id(session)
         password = mangle_password(password)
         msg_type, msg = await self._send_hello(login, password, unique_id,
                                                session)
