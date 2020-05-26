@@ -7,8 +7,6 @@ long_desc = """
 A prototype slash mockup of a FAF python client. Probably won't go anywhere.
 """
 
-print(find_packages("src"))
-
 setup(
     name="faf_client",
     version=open('VERSION').read().strip(),

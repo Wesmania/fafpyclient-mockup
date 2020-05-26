@@ -1,6 +1,6 @@
 import asyncio
 import aiohttp
-from PySide2.QtCore import QObject, Signal
+from PySide2.QtCore import QObject, Signal, QUrl
 from PySide2.QtGui import QPixmap
 
 
@@ -33,8 +33,8 @@ class FutureImage(QObject):
                         f.write(chunk)
             self.image = QPixmap(self._filename)
             self.available.emit(self._key)
-        except (aiohttp.ClientError, IOError) as e:
-            pass    # TODO log
+        except (aiohttp.ClientError, IOError):
+            pass    # TODO
 
 
 class ImageCache(QObject):
@@ -62,9 +62,9 @@ class ImageCache(QObject):
             self._images[key] = img
             img.available.connect(self._on_new_img)
         if img.image:
-            return img._filename
+            return QUrl.fromLocalFile(img._filename)
         else:
-            return self._default_image
+            return QUrl.fromLocalFile(self._default_image)
 
     def _on_new_img(self, key):
         self.image_available.emit(key)

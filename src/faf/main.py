@@ -12,7 +12,7 @@ import sys
 import os
 import asyncio
 import aiohttp
-from asyncqt import QEventLoop
+from asyncqt import QSelectorEventLoop
 from docopt import docopt
 
 from PySide2.QtGui import QGuiApplication
@@ -29,6 +29,7 @@ from faf.models import Models
 from faf.resources import Resources
 from faf.qt_models import QtModels
 from faf.irc import Irc
+from faf.tools import glob
 
 
 def get_app():
@@ -38,7 +39,8 @@ def get_app():
 
 
 def set_loop(app):
-    loop = QEventLoop(app)
+    # Asyncqt and kin are broken with the proactor loop on Windows
+    loop = QSelectorEventLoop(app)
     asyncio.set_event_loop(loop)
 
 
@@ -51,6 +53,7 @@ def main():
     args = docopt(__doc__)
     config = get_config(args)
     root_path = args['--root']
+    glob.ROOT_PATH = root_path
 
     app = get_app()
     set_loop(app)
@@ -75,7 +78,7 @@ def main():
 
     qml_file = os.path.join(root_path, "res/ui/main_window/ToplevelWindow.qml")
 
-    ctx.setContextProperty("ROOT_PATH", root_path)
+    ctx.setContextProperty("ROOT_PATH", f"file:///{root_path}")
     engine.load(qml_file)
 
     with loop:
