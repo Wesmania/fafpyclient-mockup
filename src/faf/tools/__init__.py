@@ -3,8 +3,8 @@ import subprocess
 
 
 class Tools:
-    def __init__(self, environment):
-        self.root = environment.ROOT_PATH
+    def __init__(self, paths):
+        self.root = paths.ROOT_PATH
 
     def unique_id(self, session):
         # TODO - do we need the WMI service check on Windows?
