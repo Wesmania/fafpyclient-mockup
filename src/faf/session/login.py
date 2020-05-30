@@ -15,13 +15,13 @@ class LoginState(Enum):
 
 
 class LoginProcess:
-    def __init__(self, connection, login_message):
-        self._connection = connection
-        self._login_message = login_message
+    def __init__(self, lobby_server):
+        self._lobby_server = lobby_server
+        self._login_message = lobby_server.login_msg
         self._login_task = None
         self.obs_state = BehaviorSubject(LoginState.LOGGED_OUT)
         self.obs_auth_results = Subject()
-        self._connection.state_stream.subscribe(self._on_conn_state)
+        self._lobby_server.obs_connection_state.subscribe(self._on_conn_state)
 
     @property
     def state(self):
@@ -30,10 +30,6 @@ class LoginProcess:
     @state.setter
     def state(self, val):
         return self.obs_state.on_next(val)
-
-    @classmethod
-    def build(cls, lobby_server):
-        return cls(lobby_server.connection, lobby_server.login_msg)
 
     def login(self, login, password):
         if self.state is not LoginState.LOGGED_OUT:
@@ -44,12 +40,12 @@ class LoginProcess:
         self._login_task.add_done_callback(self._ignore_cancellation)
 
     def logout(self):
-        self._connection.disconnect_()
+        self._lobby_server.disconnect()
 
     async def _perform_login(self, login, password):
         try:
-            self._connection.connect_()
-            await self._connection.state_stream.pipe(
+            self._lobby_server.connect()
+            await self._lobby_server.obs_connection_state.pipe(
                 ops.skip_while(lambda s: s is not ConnectionState.CONNECTED),
                 ops.first()
             )
@@ -58,9 +54,9 @@ class LoginProcess:
             self.state = LoginState.LOGGED_IN
         except AuthError as e:
             self.obs_auth_results.on_next((False, e.args[0]))    # TODO
-            self._connection.disconnect_()
+            self._lobby_server.disconnect()
         except ConnectionError:
-            self._connection.disconnect_()
+            self._lobby_server.disconnect()
 
     def _on_conn_state(self, state):
         if self.state is LoginState.LOGGED_OUT:

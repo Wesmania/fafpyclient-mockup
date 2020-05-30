@@ -37,7 +37,7 @@ class LogoutModelCleaner:
 
 class LoginSession:
     def __init__(self, lobby_server, irc, models, qml_context):
-        self.login_process = LoginProcess.build(lobby_server)
+        self.login_process = LoginProcess(lobby_server)
         self.session = LoginSessionData(models.control.player_updater)
         self.login = LobbyLogin(self.login_process, self.session)
         self._model_cleaner = LogoutModelCleaner(models.data, self.login)

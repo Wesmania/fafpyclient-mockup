@@ -27,8 +27,8 @@ class LobbyConnection:
         self._port = port
         self.block_size = 0
 
-        self._state_stream = BehaviorSubject(ConnectionState.DISCONNECTED)
-        self.state_stream = self._state_stream.pipe(
+        self._obs_state = BehaviorSubject(ConnectionState.DISCONNECTED)
+        self.obs_state = self._obs_state.pipe(
             ops.distinct_until_changed()
         )
         self.message_stream = Subject()
@@ -45,13 +45,13 @@ class LobbyConnection:
 
     @property
     def state(self):
-        return self._state_stream.value
+        return self._obs_state.value
 
     def _on_socket_state_change(self, state):
         s = self._socket_state(state)
         if s is ConnectionState.DISCONNECTED:
             self.block_size = 0
-        self._state_stream.on_next(s)
+        self._obs_state.on_next(s)
 
     # Conflict with PySide2 signals!
     # Idempotent
