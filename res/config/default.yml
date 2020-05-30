@@ -12,4 +12,5 @@ resources:
                 cache_dir: !Path '{ROOT_PATH}/cache/map_previews/{{name}}.png'
                 access_url: 'https://content.faforever.com/faf/vault/map_previews/small/{name}.png'
                 default_image: !Path '{ROOT_PATH}/res/icons/games/unknown_map.png'
-
+        news_feed:
+                url: 'http://direct.faforever.com/wp-json/wp/v2/posts?per_page={count}&page={page}&_embed=1'

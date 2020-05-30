@@ -1,6 +1,5 @@
 from PySide2.QtCore import QObject, Slot
-
-from faf.tabs.news.wpapi import WPAPI
+import asyncio
 from faf.qt import QtPlainListModel, QtRoleEnum
 
 
@@ -33,11 +32,12 @@ class NewsModel(QtPlainListModel):
 
 
 class NewsTab(QObject):
-    def __init__(self, login_session, qml_context):
+    def __init__(self, login_session, resources, qml_context):
         QObject.__init__(self)
         self._login_session = login_session
-        self._api = WPAPI()
+        self._api = resources.wordpress_api()
         self.model = NewsModel()
+        self._fetch_job = None
 
         self._login_session.login.logged_in.connect(self.fetch)
         self._api.done.connect(self._set_news)
@@ -47,7 +47,12 @@ class NewsTab(QObject):
 
     @Slot()
     def fetch(self):
-        self._api.fetch()
+        if self._fetch_job is not None and not self._fetch_job.done():
+            return
+        self._fetch_job = asyncio.create_task(self._api.fetch())
+        self._fetch_job.add_done_callback(self._set_news)
 
-    def _set_news(self, news_list):
-        self.model.set_news(news_list)
+    async def _fetch(self):
+        news = await self._api.fetch()
+        if news is not None:
+            self.model.set_news(news)

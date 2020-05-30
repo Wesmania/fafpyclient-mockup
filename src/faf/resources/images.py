@@ -1,5 +1,6 @@
 import asyncio
 import aiohttp
+import os
 from PySide2.QtCore import QObject, Signal, QUrl
 from PySide2.QtGui import QPixmap
 
@@ -42,11 +43,11 @@ class ImageCache(QObject):
 
     def __init__(self, cache_dir, access_url, default_image, http_session):
         QObject.__init__(self)
-        self._cache_dir = cache_dir
+        self._cache_dir = os.path.realpath(cache_dir.path)
+        self._default_image = os.path.realpath(default_image.path)
         self._access_url = access_url
         self._images = {}
         self._http_session = http_session
-        self._default_image = default_image
 
     def _img_file(self, name):
         return self._cache_dir.format(name=name)

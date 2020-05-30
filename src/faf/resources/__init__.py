@@ -1,12 +1,10 @@
 from faf.resources.images import ImageCache
-import os
+from faf.resources.news_feed import WordpressAPI
 
 
 class Resources:
     def __init__(self, config, http_session):
         mp = config['map_previews']
-        cache_dir = os.path.realpath(mp['cache_dir'].path)
-        access_url = mp['access_url']
-        default_image = os.path.realpath(mp['default_image'].path)
-        self.map_previews = ImageCache(cache_dir, access_url, default_image,
-                                       http_session)
+        self.map_previews = ImageCache(mp['cache_dir'], mp['access_url'],
+                                       mp['default_image'], http_session)
+        self.wordpress_api = WordpressAPI(config['news_feed'], http_session)

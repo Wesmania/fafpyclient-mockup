@@ -38,7 +38,8 @@ class FAFClient:
         self.login_session = LoginSession(self.lobby_server, self.irc,
                                           self.models, self.env.qml_engine_ctx)
 
-        self.news_tab = NewsTab(self.login_session, self.env.qml_engine_ctx)
+        self.news_tab = NewsTab(self.login_session, self.resources,
+                                self.env.qml_engine_ctx)
         self.games_tab = GamesTab(self.qt_models, self.env.qml_engine_ctx)
         self.chat_tab = ChatTab(self.irc, self.models, self.env.qml_engine_ctx)
 
