@@ -42,6 +42,7 @@ class LoginMessage:
 
         if msg_type == 'welcome':
             player_info, login = msg["me"], msg["id"]
+            print(session, unique_id, player_info)
             return LoginResult(login, password, session, unique_id,
                                player_info)
         else:

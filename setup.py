@@ -21,8 +21,8 @@ setup(
     url="https://github.com/Wesmania/fafpyclient-mockup",
     keywords="FAForever client",
     license="GPL3",
-    package_dir = {"": "src"},
-    packages=find_packages("src"),
+    package_dir={"": "src"},
+    packages=find_packages("src", exclude=("src/test",)),
     entry_points={
         "console_scripts": [
             "faf_client = faf.main:main",

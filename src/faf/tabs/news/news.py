@@ -35,12 +35,11 @@ class NewsTab(QObject):
     def __init__(self, login_session, resources, qml_context):
         QObject.__init__(self)
         self._login_session = login_session
-        self._api = resources.wordpress_api()
+        self._api = resources.wordpress_api
         self.model = NewsModel()
         self._fetch_job = None
 
         self._login_session.login.logged_in.connect(self.fetch)
-        self._api.done.connect(self._set_news)
 
         qml_context.setContextProperty("faf__tabs__news", self)
         qml_context.setContextProperty("faf__tabs__news__model", self.model)
@@ -49,8 +48,8 @@ class NewsTab(QObject):
     def fetch(self):
         if self._fetch_job is not None and not self._fetch_job.done():
             return
-        self._fetch_job = asyncio.create_task(self._api.fetch())
-        self._fetch_job.add_done_callback(self._set_news)
+        self._fetch_job = asyncio.create_task(self._fetch())
+        self._fetch_job.add_done_callback(lambda f: None)
 
     async def _fetch(self):
         news = await self._api.fetch()

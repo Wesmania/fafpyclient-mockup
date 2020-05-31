@@ -35,11 +35,19 @@ class MockIrcClient(QObject):
         pass
 
     def connect_(self, username, password):
-        QTimer.singleShot(0, self, self._do_connect)
+        QTimer.singleShot(0, self._do_connect)
 
     def _do_connect(self):
         self.at_connected.emit()
         self.at_nickserv_identified.emit()
 
     def disconnect_(self):
-        QTimer.singleShot(0, self, self.at_disconnected.emit)
+        QTimer.singleShot(0, self.at_disconnected.emit)
+
+
+class MockIrc:
+    def __init__(self):
+        self.client = MockIrcClient()
+
+    def on_identified(self):
+        pass

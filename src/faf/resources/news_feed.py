@@ -25,11 +25,11 @@ class WordpressAPI:
             posts = []
             for post in js:
                 content = {
-                    'title': post.get('title', {}).get('rendered'),
-                    'body': post.get('content', {}).get('rendered'),
+                    'title': post.get('title', {}).get('rendered', ""),
+                    'body': post.get('content', {}).get('rendered', ""),
                     'date': post.get('date'),
-                    'excerpt': post.get('excerpt', {}).get('rendered'),
-                    'author': post.get('_embedded', {}).get('author')
+                    'excerpt': post.get('excerpt', {}).get('rendered', ""),
+                    'author': post.get('_embedded', {}).get('author', [])
                 }
                 posts.append(content)
             return posts
