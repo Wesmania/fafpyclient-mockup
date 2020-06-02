@@ -1,4 +1,5 @@
 from PySide2.QtCore import QObject, Signal, QUrl
+import os
 
 
 class MockWordpressAPI:
@@ -15,14 +16,17 @@ class MockWordpressAPI:
 class MockImageCache(QObject):
     image_available = Signal(object)
 
-    def __init__(self):
+    def __init__(self, env):
         QObject.__init__(self)
+        self._env = env
 
     def get(self, key):
-        return QUrl.fromLocalFile("./placeholder.png")
+        tmp = os.path.join(self._env.paths.ROOT_PATH,
+                           "res/icons/games/unknown_map.png")
+        return QUrl.fromLocalFile(tmp)
 
 
 class MockResources:
-    def __init__(self):
+    def __init__(self, env):
         self.wordpress_api = MockWordpressAPI()
-        self.map_previews = MockImageCache()
+        self.map_previews = MockImageCache(env)
